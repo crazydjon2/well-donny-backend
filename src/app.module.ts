@@ -8,6 +8,7 @@ import { WordsModule } from './words/words.module';
 import { CategoriesModule } from './categories/categories.module';
 import { UsersCategoriesModule } from './users_categories/users-categories.module';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { CardsModule } from './cards/cards.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
     SeederModule,
     WordsModule,
     CategoriesModule,
-    UsersCategoriesModule
+    UsersCategoriesModule,
+    CardsModule
   ],
   controllers: [AppController],
   providers: [AppService],

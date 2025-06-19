@@ -9,10 +9,12 @@ import { CreateUsersCategoriesSeederService } from './users-categories/create-us
 import { UsersCategories } from 'src/users_categories/users-categories.entity';
 import { CreateWordsSeederService } from './words/create-words.service';
 import { Word } from 'src/words/word.entity';
+import { Card } from 'src/cards/card.entity';
+import { CreateCardsSeederService } from './cards/create-cards-seeder.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Category, UsersCategories, Word])],
-  providers: [CreateUsersSeederService, SeederService, CreateCategoriesSeederService, CreateUsersCategoriesSeederService, CreateWordsSeederService],
+  imports: [TypeOrmModule.forFeature([User, Category, UsersCategories, Word, Card])],
+  providers: [CreateUsersSeederService, SeederService, CreateCategoriesSeederService, CreateUsersCategoriesSeederService, CreateWordsSeederService, CreateCardsSeederService],
   exports: [SeederService],
 })
-export class SeederModule {}
+export class SeederModule { }

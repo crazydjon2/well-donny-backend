@@ -1,16 +1,25 @@
-import { Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { User } from '../users/user.entity';
 import { Category } from '../categories/category.entity';
-import { Word } from 'src/words/word.entity';
+
+export enum UserRole {
+  CREATOR = "creator",
+  VIEWER = "viewer",
+}
 
 @Entity('users_categories')
-@Unique(['user', 'category', 'word']) // Предотвращает дубли
+@Unique(['user', 'category']) // Предотвращает дубли
 export class UsersCategories {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Word, (word) => word.usersCategories, { onDelete: 'CASCADE' })
-  word: Word;
+
+  @Column({
+    type: "enum",
+    enum: UserRole,
+    default: UserRole.CREATOR
+  })
+  role: UserRole;
 
   @ManyToOne(() => User, (user) => user.userCategories, { onDelete: 'CASCADE' })
   user: User;

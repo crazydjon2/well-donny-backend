@@ -15,7 +15,6 @@ export class Category {
   @UpdateDateColumn()
   updatedAt: Date;
 
-
   @OneToMany(() => UsersCategories, (uc) => uc.category)
   userCategories: UsersCategories[];
 }
