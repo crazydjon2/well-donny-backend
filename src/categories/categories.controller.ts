@@ -1,23 +1,34 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { Category } from './category.entity';
+import { Card } from 'src/cards/card.entity';
 
 @Controller()
 export class CategoriesController {
-      constructor(private readonly categoriesService: CategoriesService) {}
-    
-      @Get('categories')
-      getAllCategories(): Promise<Category[]> {
-        return this.categoriesService.getAllCategories();
-      }
-    
-    //   @Get('users/:id')
-    //   getUserById(@Param() params): string {
-    //     return this.userService.getUserById(params.id);
-    //   }
-    
-      @Post('category')
-      createCategory(@Body() CreateUserDto): boolean {
-        return this.categoriesService.createCategory(CreateUserDto)
-      }
+  constructor(private readonly categoriesService: CategoriesService) { }
+
+  @Get('categories')
+  getAllCategories(): Promise<Category[]> {
+    return this.categoriesService.getAllCategories();
+  }
+
+  @Get('category/:id')
+  getCategoryById(@Param() params): Promise<Category | null> {
+    return this.categoriesService.getCategoryById(params.id)
+  }
+
+  @Get('category/:id/cards')
+  getCategoryCards(@Param() params): Promise<Card[]> {
+    return this.categoriesService.getCategoryCards(params.id)
+  }
+
+  //   @Get('users/:id')
+  //   getUserById(@Param() params): string {
+  //     return this.userService.getUserById(params.id);
+  //   }
+
+  @Post('category')
+  createCategory(@Body() CreateUserDto): boolean {
+    return this.categoriesService.createCategory(CreateUserDto)
+  }
 }

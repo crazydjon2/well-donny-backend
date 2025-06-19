@@ -1,8 +1,9 @@
 import { Category } from 'src/categories/category.entity';
 import { Word } from 'src/words/word.entity';
-import { Entity, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, ManyToOne, OneToMany, Unique } from 'typeorm';
 
 @Entity('cards')
+@Unique(['category', 'word'])
 export class Card {
   @PrimaryGeneratedColumn('uuid')
   id: string;
