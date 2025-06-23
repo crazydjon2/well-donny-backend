@@ -8,6 +8,6 @@ import { CardsModule } from 'src/cards/cards.module';
 @Module({
   imports: [TypeOrmModule.forFeature([Category]), CardsModule],
   providers: [CategoriesService],
-  controllers: [CategoriesController]
+  controllers: [CategoriesController],
 })
 export class CategoriesModule {}

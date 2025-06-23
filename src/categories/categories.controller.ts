@@ -5,21 +5,21 @@ import { Card } from 'src/cards/card.entity';
 
 @Controller()
 export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) { }
+  constructor(private readonly categoriesService: CategoriesService) {}
 
   @Get('categories')
   getAllCategories(): Promise<Category[]> {
     return this.categoriesService.getAllCategories();
   }
 
-  @Get('category/:id')
+  @Get('categories/:id')
   getCategoryById(@Param() params): Promise<Category | null> {
-    return this.categoriesService.getCategoryById(params.id)
+    return this.categoriesService.getCategoryById(params.id);
   }
 
-  @Get('category/:id/cards')
+  @Get('categories/:id/cards')
   getCategoryCards(@Param() params): Promise<Card[]> {
-    return this.categoriesService.getCategoryCards(params.id)
+    return this.categoriesService.getCategoryCards(params.id);
   }
 
   //   @Get('users/:id')
@@ -27,8 +27,8 @@ export class CategoriesController {
   //     return this.userService.getUserById(params.id);
   //   }
 
-  @Post('category')
-  createCategory(@Body() CreateUserDto): boolean {
-    return this.categoriesService.createCategory(CreateUserDto)
+  @Post('categories/create')
+  createCategory(@Body() CreateUserDto) {
+    return this.categoriesService.createCategory(CreateUserDto);
   }
 }

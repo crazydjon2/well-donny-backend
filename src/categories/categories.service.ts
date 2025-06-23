@@ -11,8 +11,8 @@ export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
-    private cardService: CardsService
-  ) { }
+    private cardService: CardsService,
+  ) {}
 
   getAllCategories(): Promise<Category[]> {
     return this.categoryRepository.find();
@@ -20,16 +20,16 @@ export class CategoriesService {
   getCategoryById(id: string): Promise<Category | null> {
     return this.categoryRepository.findOne({
       where: {
-        id
-      }
-    })
+        id,
+      },
+    });
   }
   getCategoryCards(id: string): Promise<Card[]> {
-    return this.cardService.getCardsByCategory(id)
+    return this.cardService.getCardsByCategory(id);
   }
 
-  createCategory(categoryDTO: CreateCategoryDto): boolean {
-    this.categoryRepository.create(categoryDTO);
-    return true
+  createCategory(categoryDTO: CreateCategoryDto) {
+    const res = this.categoryRepository.save(categoryDTO);
+    return res;
   }
 }

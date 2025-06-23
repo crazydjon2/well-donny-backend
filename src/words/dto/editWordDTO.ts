@@ -1,8 +1,10 @@
 import { IsString } from 'class-validator';
 
-export class CreateWordDto {
+export class EditWordDto {
   @IsString()
   original: string;
   @IsString()
   translated: string;
+  @IsString()
+  id;
 }
