@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { Card } from './card.entity';
 import { WordsService } from 'src/words/words.service';
 import { CreateCardDto } from './dto';
@@ -36,5 +36,8 @@ export class CardsService {
         id: card.category_id,
       },
     });
+  }
+  async deleteCard(ids: string[]): Promise<DeleteResult> {
+    return this.cardRepository.delete(ids);
   }
 }

@@ -11,6 +11,6 @@ export class Card {
   @ManyToOne(() => Category, (c) => c.id)
   category: Category;
 
-  @ManyToOne(() => Word, (w) => w.id)
+  @ManyToOne(() => Word, (w) => w.id, { onDelete: 'CASCADE' })
   word: Word;
 }

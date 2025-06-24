@@ -1,6 +1,8 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Post } from '@nestjs/common';
 import { Card } from './card.entity';
 import { CardsService } from './cards.service';
+import { DeleteCardDto } from './dto';
+import { DeleteResult } from 'typeorm';
 
 @Controller()
 export class CardsController {
@@ -9,5 +11,10 @@ export class CardsController {
   @Post('/cards/create')
   createCard(@Body() CreateCardDto): Promise<Card> {
     return this.cardService.createCard(CreateCardDto);
+  }
+
+  @Delete('/cards/delete')
+  deleteCard(@Body() DeleteCardDto: DeleteCardDto): Promise<DeleteResult> {
+    return this.cardService.deleteCard(DeleteCardDto.ids);
   }
 }
