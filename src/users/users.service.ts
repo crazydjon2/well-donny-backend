@@ -20,10 +20,10 @@ export class UserService {
   getAllUsers(): Promise<User[]> {
     return this.usersRepository.find();
   }
-  getUser(id: string): Promise<User | null> {
+  getUser(id: number): Promise<User | null> {
     return this.usersRepository.findOne({
       where: {
-        id,
+        tg_id: id,
       },
     });
   }

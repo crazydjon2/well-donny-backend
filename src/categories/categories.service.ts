@@ -7,7 +7,7 @@ import { Card } from 'src/cards/card.entity';
 import { CardsService } from 'src/cards/cards.service';
 import { Request } from 'express';
 import { UsersCategoriesService } from 'src/users_categories/users-categories.service';
-import { AuthService } from 'src/auth/auth.service';
+import { UserService } from 'src/users/users.service';
 
 @Injectable()
 export class CategoriesService {
@@ -16,14 +16,15 @@ export class CategoriesService {
     private categoryRepository: Repository<Category>,
     private cardService: CardsService,
     private usersCategoriesService: UsersCategoriesService,
-    private authService: AuthService,
+    private userService: UserService,
   ) {}
 
-  async getAllCategories(req: Request): Promise<Category[] | null> {
+  async getAllCategories(
+    req: Request & { tg_id: number },
+  ): Promise<Category[] | null> {
     if (req.headers.authorization) {
-      const user = await this.authService.verifyToken(
-        req.headers.authorization,
-      );
+      const tg_id: number = req.tg_id;
+      const user = await this.userService.getUser(tg_id);
       if (user) {
         const usersCategories =
           await this.usersCategoriesService.getCategoriesByUser(user.id);

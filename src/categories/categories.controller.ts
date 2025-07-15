@@ -1,15 +1,27 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { Category } from './category.entity';
 import { Card } from 'src/cards/card.entity';
 import { Request } from 'express';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller()
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get('categories')
-  getAllCategories(@Req() req: Request): Promise<Category[] | null> {
+  getAllCategories(
+    @Req() req: Request & { tg_id: number },
+  ): Promise<Category[] | null> {
     return this.categoriesService.getAllCategories(req);
   }
 

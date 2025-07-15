@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './users.service';
 // import { CreateUserDto } from './create-user.dto';
 import { User } from './user.entity';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Request } from 'express';
 
 @Controller()
 export class UserController {
@@ -12,10 +14,11 @@ export class UserController {
     return this.userService.getAllUsers();
   }
 
-  // @Get('user')
-  // getUser(@Param): Promise<User | null> {
-  //   return this.userService.getUser();
-  // }
+  @UseGuards(JwtAuthGuard)
+  @Get('user')
+  getUser(@Req() req: Request & { tg_id: number }): Promise<User | null> {
+    return this.userService.getUser(req.tg_id);
+  }
 
   // @Get('users/:id')
   // getUserById(@Param() params): string {

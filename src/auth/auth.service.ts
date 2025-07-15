@@ -1,29 +1,25 @@
 // auth.service.ts
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from 'src/users/user.entity';
-import { UserService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private jwtService: JwtService,
-    private userService: UserService,
-  ) {}
+  constructor(private jwtService: JwtService) {}
 
-  signUser(req: Request): Promise<User | null> | null {
+  signUser(req: Request): string {
     // const authHeader = req.headers.authorization;
     const deviceId = req.headers['x-tg-id'] as string;
     if (deviceId) {
       const token = this.jwtService.sign({ sub: deviceId });
-      return this.verifyToken(token);
+      return token;
     }
-    return null;
+    throw new BadRequestException('There is no x-tg-id in req', {
+      cause: new Error(),
+    });
   }
 
-  verifyToken(token: string): Promise<User | null> {
+  verifyToken(token: string): number {
     const tgId: { sub: number } = this.jwtService.decode(token);
-    const user = this.userService.getUserByTgId(tgId.sub);
-    return user;
+    return tgId.sub;
   }
 }
