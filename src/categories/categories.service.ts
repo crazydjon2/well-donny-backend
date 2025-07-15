@@ -5,6 +5,9 @@ import { Category } from './category.entity';
 import { CreateCategoryDto } from './dto';
 import { Card } from 'src/cards/card.entity';
 import { CardsService } from 'src/cards/cards.service';
+import { Request } from 'express';
+import { UsersCategoriesService } from 'src/users_categories/users-categories.service';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class CategoriesService {
@@ -12,10 +15,28 @@ export class CategoriesService {
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
     private cardService: CardsService,
+    private usersCategoriesService: UsersCategoriesService,
+    private authService: AuthService,
   ) {}
 
-  getAllCategories(): Promise<Category[]> {
-    return this.categoryRepository.find();
+  async getAllCategories(req: Request): Promise<Category[] | null> {
+    if (req.headers.authorization) {
+      const user = await this.authService.verifyToken(
+        req.headers.authorization,
+      );
+      if (user) {
+        const usersCategories =
+          await this.usersCategoriesService.getCategoriesByUser(user.id);
+
+        return usersCategories.map(
+          (usersCategories) => usersCategories.category,
+        );
+      }
+
+      // TODO Error handeling (mb Auth Guard)
+      return null;
+    }
+    return null;
   }
   getCategoryById(id: string): Promise<Category | null> {
     return this.categoryRepository.findOne({

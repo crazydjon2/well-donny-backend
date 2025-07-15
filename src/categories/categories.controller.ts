@@ -1,24 +1,25 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { Category } from './category.entity';
 import { Card } from 'src/cards/card.entity';
+import { Request } from 'express';
 
 @Controller()
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Get('categories')
-  getAllCategories(): Promise<Category[]> {
-    return this.categoriesService.getAllCategories();
+  getAllCategories(@Req() req: Request): Promise<Category[] | null> {
+    return this.categoriesService.getAllCategories(req);
   }
 
   @Get('categories/:id')
-  getCategoryById(@Param() params): Promise<Category | null> {
+  getCategoryById(@Param() params: { id: string }): Promise<Category | null> {
     return this.categoriesService.getCategoryById(params.id);
   }
 
   @Get('categories/:id/cards')
-  getCategoryCards(@Param() params): Promise<Card[]> {
+  getCategoryCards(@Param() params: { id: string }): Promise<Card[]> {
     return this.categoriesService.getCategoryCards(params.id);
   }
 
@@ -28,7 +29,7 @@ export class CategoriesController {
   //   }
 
   @Post('categories/create')
-  createCategory(@Body() CreateUserDto) {
-    return this.categoriesService.createCategory(CreateUserDto);
+  createCategory(@Body() CreateCategoryDto) {
+    return this.categoriesService.createCategory(CreateCategoryDto);
   }
 }

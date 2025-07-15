@@ -22,12 +22,12 @@ export class CreateCategoriesSeederService {
     const existing = await this.categoryRepo.count();
     if (existing === 0) {
       const arr = categoriesMock.map((user: CreateCategoryDto) => {
-                return this.categoryRepo.create(user)
-            })
-            const result = await this.categoryRepo.save(arr)
+        return this.categoryRepo.create(user);
+      });
+      const result = await this.categoryRepo.save(arr);
       console.log('✅ Seeded categories');
-      return result
+      return result;
     }
-    return this.categoryRepo.find()
+    return this.categoryRepo.find();
   }
 }
