@@ -8,18 +8,18 @@ import { Word } from 'src/words/word.entity';
 
 @Injectable()
 export class CreateCardsSeederService {
-    constructor(
-        @InjectRepository(Card)
-        private readonly cardRepo: Repository<Card>,
-    ) { }
+  constructor(
+    @InjectRepository(Card)
+    private readonly cardRepo: Repository<Card>,
+  ) {}
 
-    async seed(categories: Category[], words: Word[]): Promise<Card[]> {
-        const existing = await this.cardRepo.count();
-        if (existing === 0) {
-            categories.forEach((category: Category, index) => {
-                this.cardRepo.save({ category, word: words[index] })
-            })
-        }
-        return []
+  async seed(categories: Category[], words: Word[]): Promise<Card[]> {
+    const existing = await this.cardRepo.count();
+    if (existing === 0) {
+      categories.forEach((category: Category, index) => {
+        this.cardRepo.save({ category, word: words[index] });
+      });
     }
+    return [];
+  }
 }

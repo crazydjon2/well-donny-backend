@@ -8,6 +8,7 @@ import { CardsService } from 'src/cards/cards.service';
 import { Request } from 'express';
 import { UsersCategoriesService } from 'src/users_categories/users-categories.service';
 import { UserService } from 'src/users/users.service';
+import { UsersCategories } from 'src/users_categories/users-categories.entity';
 
 @Injectable()
 export class CategoriesService {
@@ -21,7 +22,7 @@ export class CategoriesService {
 
   async getAllCategories(
     req: Request & { tg_id: number },
-  ): Promise<Category[] | null> {
+  ): Promise<UsersCategories[] | null> {
     if (req.headers.authorization) {
       const tg_id: number = req.tg_id;
       const user = await this.userService.getUser(tg_id);
@@ -29,9 +30,7 @@ export class CategoriesService {
         const usersCategories =
           await this.usersCategoriesService.getCategoriesByUser(user.id);
 
-        return usersCategories.map(
-          (usersCategories) => usersCategories.category,
-        );
+        return usersCategories;
       }
 
       // TODO Error handeling (mb Auth Guard)

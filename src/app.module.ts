@@ -10,6 +10,7 @@ import { UsersCategoriesModule } from './users_categories/users-categories.modul
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { CardsModule } from './cards/cards.module';
 import { AuthModule } from './auth/auth.module';
+import { CategoriesTypesModule } from './categories_types/categories-types.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { AuthModule } from './auth/auth.module';
     CategoriesModule,
     UsersCategoriesModule,
     CardsModule,
+    CategoriesTypesModule,
     AuthModule,
   ],
   controllers: [AppController],

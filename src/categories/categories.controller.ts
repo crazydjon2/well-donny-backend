@@ -12,6 +12,7 @@ import { Category } from './category.entity';
 import { Card } from 'src/cards/card.entity';
 import { Request } from 'express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UsersCategories } from 'src/users_categories/users-categories.entity';
 
 @Controller()
 export class CategoriesController {
@@ -21,7 +22,7 @@ export class CategoriesController {
   @Get('categories')
   getAllCategories(
     @Req() req: Request & { tg_id: number },
-  ): Promise<Category[] | null> {
+  ): Promise<UsersCategories[] | null> {
     return this.categoriesService.getAllCategories(req);
   }
 
