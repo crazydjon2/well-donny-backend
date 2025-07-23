@@ -14,6 +14,9 @@ export class WordsService {
   createWord(word: CreateWordDto): Promise<Word> {
     return this.wordRepository.save(word);
   }
+  createWords(word: CreateWordDto[]): Promise<Word[]> {
+    return this.wordRepository.save(word);
+  }
   async editWord(word: EditWordDto): Promise<UpdateResult> {
     return await this.wordRepository.update(word.id, {
       original: word.original,

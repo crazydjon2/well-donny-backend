@@ -5,7 +5,7 @@ import { Category } from 'src/categories/category.entity';
 import { CreateCategoryDto } from 'src/categories/dto';
 import { CategoriesTypes } from 'src/categories_types/categories-types.entity';
 
-const categoriesMock: CreateCategoryDto[] = [
+const categoriesMock: { name: string }[] = [
   { name: 'Baba' },
   { name: 'Laba' },
   { name: 'Vaba' },

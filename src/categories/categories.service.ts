@@ -7,8 +7,8 @@ import { Card } from 'src/cards/card.entity';
 import { CardsService } from 'src/cards/cards.service';
 import { Request } from 'express';
 import { UsersCategoriesService } from 'src/users_categories/users-categories.service';
-import { UserService } from 'src/users/users.service';
 import { UsersCategories } from 'src/users_categories/users-categories.entity';
+import { CreateWordDto } from 'src/words/dto';
 
 @Injectable()
 export class CategoriesService {
@@ -17,24 +17,14 @@ export class CategoriesService {
     private categoryRepository: Repository<Category>,
     private cardService: CardsService,
     private usersCategoriesService: UsersCategoriesService,
-    private userService: UserService,
   ) {}
 
-  async getAllCategories(
-    req: Request & { tg_id: number },
-  ): Promise<UsersCategories[] | null> {
-    if (req.headers.authorization) {
-      const tg_id: number = req.tg_id;
-      const user = await this.userService.getUser(tg_id);
-      if (user) {
-        const usersCategories =
-          await this.usersCategoriesService.getCategoriesByUser(user.id);
+  async getAllCategories(user_id: string): Promise<UsersCategories[] | null> {
+    const usersCategories =
+      await this.usersCategoriesService.getCategoriesByUser(user_id);
 
-        return usersCategories;
-      }
-
-      // TODO Error handeling (mb Auth Guard)
-      return null;
+    if (usersCategories.length) {
+      return usersCategories;
     }
     return null;
   }
@@ -49,8 +39,21 @@ export class CategoriesService {
     return this.cardService.getCardsByCategory(id);
   }
 
-  createCategory(categoryDTO: CreateCategoryDto) {
-    const res = this.categoryRepository.save(categoryDTO);
-    return res;
+  async createCategory(categoryDTO: CreateCategoryDto, user_id: string) {
+    const category = await this.categoryRepository.save(categoryDTO);
+    await this.usersCategoriesService.addCategoryToUser(user_id, category.id);
+    if (categoryDTO.words.length) {
+      await this.cardService.createCards(
+        categoryDTO.words.map((word: CreateWordDto) => {
+          return {
+            category_id: category.id,
+            word_original: word.original,
+            word_translated: word.translated,
+          };
+        }),
+      );
+    }
+
+    return category;
   }
 }

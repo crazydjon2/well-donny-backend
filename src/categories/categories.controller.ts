@@ -1,29 +1,19 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { Category } from './category.entity';
 import { Card } from 'src/cards/card.entity';
-import { Request } from 'express';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UsersCategories } from 'src/users_categories/users-categories.entity';
+import { UserId } from 'src/common/decorators/user-id.decorator';
 
 @Controller()
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get('categories')
   getAllCategories(
-    @Req() req: Request & { tg_id: number },
+    @UserId() user_id: string,
   ): Promise<UsersCategories[] | null> {
-    return this.categoriesService.getAllCategories(req);
+    return this.categoriesService.getAllCategories(user_id);
   }
 
   @Get('categories/:id')
@@ -42,7 +32,7 @@ export class CategoriesController {
   //   }
 
   @Post('categories/create')
-  createCategory(@Body() CreateCategoryDto) {
-    return this.categoriesService.createCategory(CreateCategoryDto);
+  createCategory(@UserId() user_id: string, @Body() CreateCategoryDto) {
+    return this.categoriesService.createCategory(CreateCategoryDto, user_id);
   }
 }

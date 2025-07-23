@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from 'src/users/user.entity';
 import { CreateWordDto } from 'src/words/dto';
 import { Word } from 'src/words/word.entity';
 

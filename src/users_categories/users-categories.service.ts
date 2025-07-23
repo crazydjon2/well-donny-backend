@@ -29,6 +29,7 @@ export class UsersCategoriesService {
   }
 
   async getCategoriesByUser(userId: string) {
+    console.log(userId);
     return this.userCategoryRepo.find({
       where: { user: { id: userId } },
       relations: ['category', 'user', 'category.categoriesTypes'],

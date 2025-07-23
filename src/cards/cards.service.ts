@@ -37,6 +37,28 @@ export class CardsService {
       },
     });
   }
+  async createCards(cards: CreateCardDto[]) {
+    console.log(cards);
+    const words = await this.wordService.createWords(
+      cards.map((card: CreateCardDto) => {
+        return {
+          original: card.word_original,
+          translated: card.word_translated,
+        };
+      }),
+    );
+    console.log(words);
+    return this.cardRepository.save(
+      words.map((word) => {
+        return {
+          word,
+          category: {
+            id: cards[0].category_id,
+          },
+        };
+      }),
+    );
+  }
   async deleteCard(ids: string[]): Promise<DeleteResult> {
     return this.cardRepository.delete(ids);
   }
