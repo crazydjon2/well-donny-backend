@@ -1,7 +1,7 @@
 // user-category.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {  UsersCategories } from './users-categories.entity';
+import { UsersCategories } from './users-categories.entity';
 import { UserCategoryController } from './users-categories.controller';
 import { User } from '../users/user.entity';
 import { Category } from '../categories/category.entity';

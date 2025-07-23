@@ -1,5 +1,12 @@
 import { Card } from 'src/cards/card.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToOne, OneToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 
 @Entity('words')
 export class Word {
@@ -7,10 +14,10 @@ export class Word {
   id: string;
 
   @Column()
-  original: string
+  original: string;
 
-	@Column()
-  translated: string
+  @Column()
+  translated: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -19,5 +26,5 @@ export class Word {
   updatedAt: Date;
 
   @OneToMany(() => Card, (c) => c.id)
-  card: Card
+  card: Card;
 }

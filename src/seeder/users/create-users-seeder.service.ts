@@ -15,17 +15,17 @@ export class CreateUsersSeederService {
   constructor(
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
-  ) { }
+  ) {}
 
   async seed(): Promise<User[]> {
     const existing = await this.userRepo.count();
     if (existing === 0) {
       const arr = usersMock.map((user: CreateUserDto) => {
-        return this.userRepo.create(user)
-      })
-      const result = await this.userRepo.save(arr)
-      return result
+        return this.userRepo.create(user);
+      });
+      const result = await this.userRepo.save(arr);
+      return result;
     }
-    return this.userRepo.find()
+    return this.userRepo.find();
   }
 }

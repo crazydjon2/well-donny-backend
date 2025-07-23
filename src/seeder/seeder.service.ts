@@ -4,23 +4,26 @@ import { CreateCategoriesSeederService } from './categories/create-categories-se
 import { CreateUsersCategoriesSeederService } from './users-categories/create-users-categories.service';
 import { CreateWordsSeederService } from './words/create-words.service';
 import { CreateCardsSeederService } from './cards/create-cards-seeder.service';
+import { CreateCategoriesTypesSeederService } from './categories-types/create-categories-types-seeder.service';
 
 @Injectable()
 export class SeederService {
-    constructor(
-        private readonly createUsersSeederService: CreateUsersSeederService,
-        private readonly createCategoriesSeederService: CreateCategoriesSeederService,
-        private readonly createUsersCategoriesSeederService: CreateUsersCategoriesSeederService,
-        private readonly createWordsSeederService: CreateWordsSeederService,
-        private readonly createCardsSeederService: CreateCardsSeederService,
-    ) { }
+  constructor(
+    private readonly createUsersSeederService: CreateUsersSeederService,
+    private readonly createCategoriesSeederService: CreateCategoriesSeederService,
+    private readonly createUsersCategoriesSeederService: CreateUsersCategoriesSeederService,
+    private readonly createWordsSeederService: CreateWordsSeederService,
+    private readonly createCardsSeederService: CreateCardsSeederService,
+    private readonly createCategoriesTypesService: CreateCategoriesTypesSeederService,
+  ) {}
 
-    async seed() {
-        const users = await this.createUsersSeederService.seed()
-        const categories = await this.createCategoriesSeederService.seed()
-        const words = await this.createWordsSeederService.seed()
+  async seed() {
+    const users = await this.createUsersSeederService.seed();
+    const types = await this.createCategoriesTypesService.seed();
+    const categories = await this.createCategoriesSeederService.seed(types);
+    const words = await this.createWordsSeederService.seed();
 
-        await this.createUsersCategoriesSeederService.seed(users, categories)
-        await this.createCardsSeederService.seed(categories, words)
-    }
+    await this.createUsersCategoriesSeederService.seed(users, categories);
+    await this.createCardsSeederService.seed(categories, words);
+  }
 }
