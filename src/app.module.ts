@@ -9,8 +9,6 @@ import { CategoriesModule } from './categories/categories.module';
 import { UsersCategoriesModule } from './users_categories/users-categories.module';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { CardsModule } from './cards/cards.module';
-import { AuthModule } from './auth/auth.module';
-import { CategoriesTypesModule } from './categories_types/categories-types.module';
 
 @Module({
   imports: [
@@ -19,9 +17,9 @@ import { CategoriesTypesModule } from './categories_types/categories-types.modul
       type: 'postgres',
       host: 'localhost',
       port: 5432,
-      username: 'user',
-      password: 'password',
-      database: 'mydatabase',
+      username: 'user', 
+      password: 'password', 
+      database: 'mydatabase', 
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       namingStrategy: new SnakeNamingStrategy(),
@@ -30,9 +28,7 @@ import { CategoriesTypesModule } from './categories_types/categories-types.modul
     WordsModule,
     CategoriesModule,
     UsersCategoriesModule,
-    CardsModule,
-    CategoriesTypesModule,
-    AuthModule,
+    CardsModule
   ],
   controllers: [AppController],
   providers: [AppService],
