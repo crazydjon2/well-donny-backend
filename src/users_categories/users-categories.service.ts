@@ -1,9 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Category } from 'src/categories/category.entity';
-import { User } from 'src/users/user.entity';
-import { Repository } from 'typeorm';
-import { UsersCategories } from './users-categories.entity';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Category } from "src/categories/category.entity";
+import { User } from "src/users/user.entity";
+import { Repository } from "typeorm";
+import { UsersCategories } from "./users-categories.entity";
 
 @Injectable()
 export class UsersCategoriesService {
@@ -29,10 +29,9 @@ export class UsersCategoriesService {
   }
 
   async getCategoriesByUser(userId: string) {
-    console.log(userId);
     return this.userCategoryRepo.find({
       where: { user: { id: userId } },
-      relations: ['category', 'user', 'category.categoriesTypes'],
+      relations: ['category'],
     });
   }
 }

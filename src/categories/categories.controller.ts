@@ -39,4 +39,3 @@ export class CategoriesController {
   ) {
     return this.categoriesService.createCategory(categoryDTO, user_id);
   }
-}
