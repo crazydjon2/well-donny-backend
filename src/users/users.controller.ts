@@ -1,9 +1,7 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param,  Post, Body } from '@nestjs/common';
 import { UserService } from './users.service';
-// import { CreateUserDto } from './create-user.dto';
+import { CreateUserDto } from './create-user.dto';
 import { User } from './user.entity';
-import { Request } from 'express';
-import { UserId } from 'src/common/decorators/user-id.decorator';
 
 @Controller()
 export class UserController {
@@ -14,11 +12,6 @@ export class UserController {
     return this.userService.getAllUsers();
   }
 
-  @Get('user')
-  getUser(@UserId() user_id: string): Promise<User | null> {
-    return this.userService.getUser(user_id);
-  }
-
   // @Get('users/:id')
   // getUserById(@Param() params): string {
   //   return this.userService.getUserById(params.id);
@@ -26,6 +19,6 @@ export class UserController {
 
   @Post('user')
   createUser(@Body() CreateUserDto): boolean {
-    return this.userService.createUser(CreateUserDto);
+    return this.userService.createUser(CreateUserDto)
   }
 }
