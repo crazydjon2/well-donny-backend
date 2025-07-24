@@ -4,6 +4,7 @@ import { UserService } from './users.service';
 import { User } from './user.entity';
 import { Request } from 'express';
 import { UserId } from 'src/common/decorators/user-id.decorator';
+import { CreateUserDto } from './create-user.dto';
 
 @Controller()
 export class UserController {
@@ -25,7 +26,7 @@ export class UserController {
   // }
 
   @Post('user')
-  createUser(@Body() CreateUserDto): boolean {
-    return this.userService.createUser(CreateUserDto);
+  createUser(@Body() userDTO: CreateUserDto): boolean {
+    return this.userService.createUser(userDTO);
   }
 }

@@ -4,6 +4,7 @@ import { Category } from './category.entity';
 import { Card } from 'src/cards/card.entity';
 import { UsersCategories } from 'src/users_categories/users-categories.entity';
 import { UserId } from 'src/common/decorators/user-id.decorator';
+import { CreateCategoryDto } from './dto';
 
 @Controller()
 export class CategoriesController {
@@ -32,7 +33,10 @@ export class CategoriesController {
   //   }
 
   @Post('categories/create')
-  createCategory(@UserId() user_id: string, @Body() CreateCategoryDto) {
-    return this.categoriesService.createCategory(CreateCategoryDto, user_id);
+  createCategory(
+    @UserId() user_id: string,
+    @Body() categoryDTO: CreateCategoryDto,
+  ) {
+    return this.categoriesService.createCategory(categoryDTO, user_id);
   }
 }
