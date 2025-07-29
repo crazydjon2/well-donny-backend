@@ -8,7 +8,7 @@ export class Card {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Category, (c) => c.id)
+  @ManyToOne(() => Category, (c) => c.id, { onDelete: 'CASCADE' })
   category: Category;
 
   @ManyToOne(() => Word, (w) => w.id, { onDelete: 'CASCADE' })

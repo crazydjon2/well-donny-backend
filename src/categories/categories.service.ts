@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { Category } from './category.entity';
 import { CreateCategoryDto } from './dto';
 import { Card } from 'src/cards/card.entity';
@@ -9,6 +9,8 @@ import { Request } from 'express';
 import { UsersCategoriesService } from 'src/users_categories/users-categories.service';
 import { UsersCategories } from 'src/users_categories/users-categories.entity';
 import { CreateWordDto } from 'src/words/dto';
+import { GetCategoryDTO } from './dto/get-category.dto';
+import { CategoryMapper } from './mappers/category.mapper';
 
 @Injectable()
 export class CategoriesService {
@@ -17,6 +19,7 @@ export class CategoriesService {
     private categoryRepository: Repository<Category>,
     private cardService: CardsService,
     private usersCategoriesService: UsersCategoriesService,
+    private categoryMapper: CategoryMapper,
   ) {}
 
   async getAllCategories(user_id: string): Promise<UsersCategories[] | null> {
@@ -28,12 +31,20 @@ export class CategoriesService {
     }
     return null;
   }
-  getCategoryById(id: string): Promise<Category | null> {
-    return this.categoryRepository.findOne({
+  async getCategoryById(id: string): Promise<GetCategoryDTO | null> {
+    const category = await this.categoryRepository.findOne({
+      relations: ['userCategories.user'],
       where: {
         id,
       },
     });
+    if (category) {
+      return this.categoryMapper.toGetDTO(category);
+    }
+    return null;
+  }
+  deleteCategoryById(id: string): Promise<DeleteResult> {
+    return this.categoryRepository.delete({ id });
   }
   getCategoryCards(id: string): Promise<Card[]> {
     return this.cardService.getCardsByCategory(id);
