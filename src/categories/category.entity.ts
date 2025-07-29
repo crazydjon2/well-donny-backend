@@ -1,5 +1,14 @@
+import { CategoriesTypes } from 'src/categories_types/categories-types.entity';
 import { UsersCategories } from 'src/users_categories/users-categories.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+  ManyToOne,
+} from 'typeorm';
 
 @Entity('categories')
 export class Category {
@@ -7,7 +16,10 @@ export class Category {
   id: string;
 
   @Column()
-  name: string
+  name: string;
+
+  @Column({ nullable: true })
+  description: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -15,6 +27,11 @@ export class Category {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => UsersCategories, (uc) => uc.category)
+  @OneToMany(() => UsersCategories, (uc) => uc.category, {
+    onDelete: 'CASCADE',
+  })
   userCategories: UsersCategories[];
+
+  @ManyToOne(() => CategoriesTypes, (ct) => ct.id)
+  categoriesTypes: CategoriesTypes;
 }

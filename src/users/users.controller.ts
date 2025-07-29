@@ -1,15 +1,23 @@
-import { Controller, Get, Param,  Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { UserService } from './users.service';
-import { CreateUserDto } from './create-user.dto';
+// import { CreateUserDto } from './create-user.dto';
 import { User } from './user.entity';
+import { Request } from 'express';
+import { UserId } from 'src/common/decorators/user-id.decorator';
+import { CreateUserDto } from './dto/create-user.dto';
 
-@Controller()
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('users')
+  @Get('all')
   getAllUsers(): Promise<User[]> {
     return this.userService.getAllUsers();
+  }
+
+  @Get()
+  getUser(@UserId() user_id: string): Promise<User | null> {
+    return this.userService.getUser(user_id);
   }
 
   // @Get('users/:id')
@@ -17,8 +25,8 @@ export class UserController {
   //   return this.userService.getUserById(params.id);
   // }
 
-  @Post('user')
-  createUser(@Body() CreateUserDto): boolean {
-    return this.userService.createUser(CreateUserDto)
+  @Post()
+  createUser(@Body() userDTO: CreateUserDto): boolean {
+    return this.userService.createUser(userDTO);
   }
 }
