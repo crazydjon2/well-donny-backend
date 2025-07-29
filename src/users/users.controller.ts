@@ -6,16 +6,16 @@ import { Request } from 'express';
 import { UserId } from 'src/common/decorators/user-id.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
 
-@Controller()
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('users')
+  @Get('all')
   getAllUsers(): Promise<User[]> {
     return this.userService.getAllUsers();
   }
 
-  @Get('user')
+  @Get()
   getUser(@UserId() user_id: string): Promise<User | null> {
     return this.userService.getUser(user_id);
   }
@@ -25,7 +25,7 @@ export class UserController {
   //   return this.userService.getUserById(params.id);
   // }
 
-  @Post('user')
+  @Post()
   createUser(@Body() userDTO: CreateUserDto): boolean {
     return this.userService.createUser(userDTO);
   }

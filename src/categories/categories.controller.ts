@@ -1,38 +1,41 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+} from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import { Card } from 'src/cards/card.entity';
 import { UsersCategories } from 'src/users_categories/users-categories.entity';
 import { UserId } from 'src/common/decorators/user-id.decorator';
-import { CreateCategoryDto } from './dto';
+import { CategoryDTO, CreateCategoryDto } from './dto';
 import { DeleteResult } from 'typeorm';
-import { GetCategoryDTO } from './dto/get-category.dto';
 
-@Controller()
+@Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
-  @Get('categories')
+  @Get()
   getAllCategories(
     @UserId() user_id: string,
   ): Promise<UsersCategories[] | null> {
     return this.categoriesService.getAllCategories(user_id);
   }
 
-  @Get('categories/:id')
+  @Get(':id')
   getCategoryById(
-    @Param() params: { id: string },
-  ): Promise<GetCategoryDTO | null> {
-    return this.categoriesService.getCategoryById(params.id);
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<CategoryDTO | null> {
+    return this.categoriesService.getCategoryById(id);
   }
 
-  @Delete('categories/:id')
-  deleteCategory(@Param() params: { id: string }): Promise<DeleteResult> {
-    return this.categoriesService.deleteCategoryById(params.id);
-  }
-
-  @Get('categories/:id/cards')
-  getCategoryCards(@Param() params: { id: string }): Promise<Card[]> {
-    return this.categoriesService.getCategoryCards(params.id);
+  @Delete(':id')
+  deleteCategory(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<DeleteResult> {
+    return this.categoriesService.deleteCategoryById(id);
   }
 
   //   @Get('users/:id')
@@ -40,7 +43,7 @@ export class CategoriesController {
   //     return this.userService.getUserById(params.id);
   //   }
 
-  @Post('categories/create')
+  @Post('create')
   createCategory(
     @UserId() user_id: string,
     @Body() categoryDTO: CreateCategoryDto,

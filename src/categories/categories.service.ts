@@ -2,24 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { Category } from './category.entity';
-import { CreateCategoryDto } from './dto';
-import { Card } from 'src/cards/card.entity';
+import { CategoryDTO, CreateCategoryDto } from './dto';
 import { CardsService } from 'src/cards/cards.service';
-import { Request } from 'express';
 import { UsersCategoriesService } from 'src/users_categories/users-categories.service';
 import { UsersCategories } from 'src/users_categories/users-categories.entity';
 import { CreateWordDto } from 'src/words/dto';
-import { GetCategoryDTO } from './dto/get-category.dto';
-import { CategoryMapper } from './mappers/category.mapper';
+import { toGetDTO } from './mappers/category.mapper';
 
 @Injectable()
 export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
-    private cardService: CardsService,
+    private cardsService: CardsService,
     private usersCategoriesService: UsersCategoriesService,
-    private categoryMapper: CategoryMapper,
   ) {}
 
   async getAllCategories(user_id: string): Promise<UsersCategories[] | null> {
@@ -31,7 +27,7 @@ export class CategoriesService {
     }
     return null;
   }
-  async getCategoryById(id: string): Promise<GetCategoryDTO | null> {
+  async getCategoryById(id: string): Promise<CategoryDTO | null> {
     const category = await this.categoryRepository.findOne({
       relations: ['userCategories.user'],
       where: {
@@ -39,22 +35,19 @@ export class CategoriesService {
       },
     });
     if (category) {
-      return this.categoryMapper.toGetDTO(category);
+      return toGetDTO(category);
     }
-    return null;
+    return category;
   }
   deleteCategoryById(id: string): Promise<DeleteResult> {
     return this.categoryRepository.delete({ id });
-  }
-  getCategoryCards(id: string): Promise<Card[]> {
-    return this.cardService.getCardsByCategory(id);
   }
 
   async createCategory(categoryDTO: CreateCategoryDto, user_id: string) {
     const category = await this.categoryRepository.save(categoryDTO);
     await this.usersCategoriesService.addCategoryToUser(user_id, category.id);
     if (categoryDTO.words.length) {
-      await this.cardService.createCards(
+      await this.cardsService.createCards(
         categoryDTO.words.map((word: CreateWordDto) => {
           return {
             category_id: category.id,

@@ -18,7 +18,7 @@ export class CreateCategoriesTypesSeederService {
     if (existing === 0) {
       const types = [
         { type: CategoryType.LANGUAGE },
-        { type: CategoryType.SIENCE },
+        { type: CategoryType.SCIENCE },
       ];
       const result = await this.categoriesTypesRepository.save(types);
       return result;

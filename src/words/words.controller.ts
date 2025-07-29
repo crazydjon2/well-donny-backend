@@ -1,18 +1,18 @@
 import { Body, Controller, Delete, Put } from '@nestjs/common';
 import { WordsService } from './words.service';
 import { DeleteResult, UpdateResult } from 'typeorm';
-import type { DeleteWordDto, EditWordDto } from './dto';
+import type { DeleteWordDto, UpdateWordDto } from './dto';
 
-@Controller()
+@Controller('words')
 export class WordsController {
   constructor(private readonly wordsServie: WordsService) {}
 
-  @Put('/words/edit')
-  editWord(@Body() EditWordDto: EditWordDto): Promise<UpdateResult> {
-    return this.wordsServie.editWord(EditWordDto);
+  @Put('update')
+  updateWord(@Body() updateWordDto: UpdateWordDto): Promise<UpdateResult> {
+    return this.wordsServie.updateWord(updateWordDto);
   }
 
-  @Delete('/words/delete')
+  @Delete('delete')
   deleteWord(@Body() DeleteWordDTO: DeleteWordDto): Promise<DeleteResult> {
     return this.wordsServie.deleteWord(DeleteWordDTO.ids);
   }

@@ -3,7 +3,7 @@ import { CreateWordDto } from './dto';
 import { Word } from './word.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
-import { EditWordDto } from './dto/editWord.dto';
+import { UpdateWordDto } from './dto/update-word.dto';
 
 @Injectable()
 export class WordsService {
@@ -17,7 +17,7 @@ export class WordsService {
   createWords(word: CreateWordDto[]): Promise<Word[]> {
     return this.wordRepository.save(word);
   }
-  async editWord(word: EditWordDto): Promise<UpdateResult> {
+  async updateWord(word: UpdateWordDto): Promise<UpdateResult> {
     return await this.wordRepository.update(word.id, {
       original: word.original,
       translated: word.translated,

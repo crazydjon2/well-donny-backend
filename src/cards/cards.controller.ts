@@ -1,20 +1,33 @@
-import { Body, Controller, Delete, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+} from '@nestjs/common';
 import { Card } from './card.entity';
 import { CardsService } from './cards.service';
 import { CreateCardDto, DeleteCardDto } from './dto';
 import { DeleteResult } from 'typeorm';
 
-@Controller()
+@Controller('cards')
 export class CardsController {
-  constructor(private readonly cardService: CardsService) {}
+  constructor(private readonly cardsService: CardsService) {}
 
-  @Post('/cards/create')
+  @Post('create')
   createCard(@Body() CreateCardDto: CreateCardDto): Promise<Card> {
-    return this.cardService.createCard(CreateCardDto);
+    return this.cardsService.createCard(CreateCardDto);
   }
 
-  @Delete('/cards/delete')
+  @Get('/by-category/:id')
+  getCategoryCards(@Param('id', ParseUUIDPipe) id: string): Promise<Card[]> {
+    return this.cardsService.getCardsByCategory(id);
+  }
+
+  @Delete('delete')
   deleteCard(@Body() DeleteCardDto: DeleteCardDto): Promise<DeleteResult> {
-    return this.cardService.deleteCard(DeleteCardDto.ids);
+    return this.cardsService.deleteCard(DeleteCardDto.ids);
   }
 }

@@ -15,9 +15,13 @@ export class CreateCardsSeederService {
   async seed(categories: Category[], words: Word[]): Promise<Card[]> {
     const existing = await this.cardRepo.count();
     if (existing === 0) {
-      categories.forEach((category: Category, index) => {
-        this.cardRepo.save({ category, word: words[index] });
+      const cardsToCreate = categories.map((category: Category, index) => {
+        return this.cardRepo.create({
+          category,
+          word: words[index],
+        });
       });
+      return this.cardRepo.save(cardsToCreate);
     }
     return [];
   }

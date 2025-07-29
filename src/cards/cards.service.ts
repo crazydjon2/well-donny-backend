@@ -38,7 +38,6 @@ export class CardsService {
     });
   }
   async createCards(cards: CreateCardDto[]) {
-    console.log(cards);
     const words = await this.wordService.createWords(
       cards.map((card: CreateCardDto) => {
         return {
@@ -47,17 +46,14 @@ export class CardsService {
         };
       }),
     );
-    console.log(words);
-    return this.cardRepository.save(
-      words.map((word) => {
-        return {
-          word,
-          category: {
-            id: cards[0].category_id,
-          },
-        };
-      }),
-    );
+    const cardsToSave = words.map((word, index) => {
+      return this.cardRepository.create({
+        word,
+        category: { id: cards[index].category_id },
+      });
+    });
+
+    return this.cardRepository.save(cardsToSave);
   }
   async deleteCard(ids: string[]): Promise<DeleteResult> {
     return this.cardRepository.delete(ids);
