@@ -27,7 +27,9 @@ export class Category {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => UsersCategories, (uc) => uc.category)
+  @OneToMany(() => UsersCategories, (uc) => uc.category, {
+    onDelete: 'CASCADE',
+  })
   userCategories: UsersCategories[];
 
   @ManyToOne(() => CategoriesTypes, (ct) => ct.id)

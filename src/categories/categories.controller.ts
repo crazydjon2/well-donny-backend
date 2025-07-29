@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import { Category } from './category.entity';
 import { Card } from 'src/cards/card.entity';
 import { UsersCategories } from 'src/users_categories/users-categories.entity';
 import { UserId } from 'src/common/decorators/user-id.decorator';
 import { CreateCategoryDto } from './dto';
+import { DeleteResult } from 'typeorm';
+import { GetCategoryDTO } from './dto/get-category.dto';
 
 @Controller()
 export class CategoriesController {
@@ -18,8 +19,15 @@ export class CategoriesController {
   }
 
   @Get('categories/:id')
-  getCategoryById(@Param() params: { id: string }): Promise<Category | null> {
+  getCategoryById(
+    @Param() params: { id: string },
+  ): Promise<GetCategoryDTO | null> {
     return this.categoriesService.getCategoryById(params.id);
+  }
+
+  @Delete('categories/:id')
+  deleteCategory(@Param() params: { id: string }): Promise<DeleteResult> {
+    return this.categoriesService.deleteCategoryById(params.id);
   }
 
   @Get('categories/:id/cards')

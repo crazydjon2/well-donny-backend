@@ -4,7 +4,7 @@ import { UserService } from './users.service';
 import { User } from './user.entity';
 import { Request } from 'express';
 import { UserId } from 'src/common/decorators/user-id.decorator';
-import { CreateUserDto } from './create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller()
 export class UserController {
