@@ -8,7 +8,7 @@ export class AuthController {
 
   @Public()
   @Get('signIn')
-  signIn(@Req() req: Request): { token: string } {
-    return { token: this.authService.signUser(req) };
+  async signIn(@Req() req: Request): Promise<{ token: string }> {
+    return this.authService.signUser(req);
   }
 }

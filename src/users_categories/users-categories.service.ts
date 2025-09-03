@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from 'src/categories/category.entity';
 import { User } from 'src/users/user.entity';
 import { Repository } from 'typeorm';
-import { UsersCategories } from './users-categories.entity';
+import { UserRole, UsersCategories } from './users-categories.entity';
 
 @Injectable()
 export class UsersCategoriesService {
@@ -16,7 +16,7 @@ export class UsersCategoriesService {
     private readonly categoryRepo: Repository<Category>,
   ) {}
 
-  async addCategoryToUser(userId: string, categoryId: string) {
+  async addCategoryToUser(userId: string, categoryId: string, role: UserRole) {
     const user = await this.userRepo.findOneBy({ id: userId });
     const category = await this.categoryRepo.findOneBy({ id: categoryId });
 
@@ -24,14 +24,23 @@ export class UsersCategoriesService {
       throw new NotFoundException('User or category not found');
     }
 
-    const userCategory = this.userCategoryRepo.create({ user, category });
+    const userCategory = this.userCategoryRepo.create({
+      user,
+      category,
+      role: role || UserRole.VIEWER,
+    });
     return this.userCategoryRepo.save(userCategory);
   }
 
-  async getCategoriesByUser(userId: string) {
-    console.log(userId);
+  async getCategoriesByUser(userId?: string, type?: string, role?: UserRole) {
     return this.userCategoryRepo.find({
-      where: { user: { id: userId } },
+      where: {
+        user: { id: userId },
+        role,
+        category: {
+          categoriesTypes: { id: type },
+        },
+      },
       relations: ['category', 'user', 'category.categoriesTypes'],
     });
   }

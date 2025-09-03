@@ -6,6 +6,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Query,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { UsersCategories } from 'src/users_categories/users-categories.entity';
@@ -18,10 +19,20 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Get()
-  getAllCategories(
+  getUsersCategories(
     @UserId() user_id: string,
   ): Promise<UsersCategories[] | null> {
-    return this.categoriesService.getAllCategories(user_id);
+    return this.categoriesService.getUsersCategories(user_id);
+  }
+
+  @Get('/all')
+  getAllCategories(
+    @Query()
+    query: {
+      type: string;
+    },
+  ): Promise<UsersCategories[] | null> {
+    return this.categoriesService.getAllCategories(query);
   }
 
   @Get(':id')

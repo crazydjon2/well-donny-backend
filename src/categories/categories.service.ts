@@ -5,7 +5,10 @@ import { Category } from './category.entity';
 import { CategoryDTO, CreateCategoryDto } from './dto';
 import { CardsService } from 'src/cards/cards.service';
 import { UsersCategoriesService } from 'src/users_categories/users-categories.service';
-import { UsersCategories } from 'src/users_categories/users-categories.entity';
+import {
+  UserRole,
+  UsersCategories,
+} from 'src/users_categories/users-categories.entity';
 import { CreateWordDto } from 'src/words/dto';
 import { toGetDTO } from './mappers/category.mapper';
 import { CategoriesTypesService } from 'src/categories_types/categories-types.service';
@@ -20,7 +23,7 @@ export class CategoriesService {
     private categoriesTypesService: CategoriesTypesService,
   ) {}
 
-  async getAllCategories(user_id: string): Promise<UsersCategories[] | null> {
+  async getUsersCategories(user_id: string): Promise<UsersCategories[] | null> {
     const usersCategories =
       await this.usersCategoriesService.getCategoriesByUser(user_id);
 
@@ -28,6 +31,17 @@ export class CategoriesService {
       return usersCategories;
     }
     return null;
+  }
+  async getAllCategories({
+    type,
+  }: {
+    type: string;
+  }): Promise<UsersCategories[]> {
+    return await this.usersCategoriesService.getCategoriesByUser(
+      undefined,
+      type,
+      UserRole.CREATOR,
+    );
   }
   async getCategoryById(id: string): Promise<CategoryDTO | null> {
     const category = await this.categoryRepository.findOne({
@@ -37,7 +51,6 @@ export class CategoriesService {
       },
     });
     if (category) {
-      console.log(category);
       return toGetDTO(category);
     }
     return null;
@@ -50,13 +63,16 @@ export class CategoriesService {
     const type = await this.categoriesTypesService.getTypeById(
       categoryDTO.type,
     );
-    console.log(type);
     if (type) {
       const category = await this.categoryRepository.save({
         ...categoryDTO,
         categoriesTypes: type,
       });
-      await this.usersCategoriesService.addCategoryToUser(user_id, category.id);
+      await this.usersCategoriesService.addCategoryToUser(
+        user_id,
+        category.id,
+        UserRole.CREATOR,
+      );
       if (categoryDTO.words.length) {
         await this.cardsService.createCards(
           categoryDTO.words.map((word: CreateWordDto) => {

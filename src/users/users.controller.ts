@@ -5,6 +5,7 @@ import { User } from './user.entity';
 import { Request } from 'express';
 import { UserId } from 'src/common/decorators/user-id.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
+import { Public } from 'src/common/decorators/public.decorator';
 
 @Controller('user')
 export class UserController {
@@ -25,8 +26,9 @@ export class UserController {
   //   return this.userService.getUserById(params.id);
   // }
 
+  @Public()
   @Post()
-  createUser(@Body() userDTO: CreateUserDto): boolean {
+  createUser(@Body() userDTO: CreateUserDto): Promise<User> {
     return this.userService.createUser(userDTO);
   }
 }

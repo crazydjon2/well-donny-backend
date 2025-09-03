@@ -4,6 +4,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 export enum CategoryType {
   LANGUAGE = 'language',
   SCIENCE = 'science',
+  MATH = 'mathematica',
 }
 
 @Entity('categories-types')

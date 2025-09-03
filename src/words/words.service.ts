@@ -24,7 +24,6 @@ export class WordsService {
     });
   }
   async deleteWord(ids: string[]): Promise<DeleteResult> {
-    console.log(ids);
     return await this.wordRepository.delete(ids);
   }
 }

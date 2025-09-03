@@ -40,7 +40,6 @@ export class JwtAuthGuard implements CanActivate {
       const user = await this.userService.getUserByTgId(decoded.sub);
       if (user) {
         request['user_id'] = user?.id;
-        console.log(decoded);
       }
       return true;
     } catch {
