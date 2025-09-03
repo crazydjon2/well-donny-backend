@@ -18,6 +18,8 @@ RUN npm ci
 # Bundle app source
 COPY --chown=node:node . .
 
+RUN docker compose up
+
 # Use the node user from the image (instead of the root user)
 USER node
 
@@ -44,6 +46,8 @@ ENV NODE_ENV production
 
 # Running `npm ci` removes the existing node_modules directory and passing in --only=production ensures that only the production dependencies are installed. This ensures that the node_modules directory is as optimized as possible
 RUN npm ci --only=production && npm cache clean --force
+
+RUN docker compose up
 
 USER node
 
