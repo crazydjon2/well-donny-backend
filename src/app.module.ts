@@ -11,20 +11,21 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { CardsModule } from './cards/cards.module';
 import { AuthModule } from './auth/auth.module';
 import { CategoriesTypesModule } from './categories_types/categories-types.module';
-import { ConfigModule } from '@nestjs/config';
+// import { ConfigModule } from '@nestjs/config';
+import * as dotenv from 'dotenv';
 
+console.log(dotenv.config()?.parsed);
+
+const env = dotenv.config()?.parsed;
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true, // Сделать переменные окружения доступными глобально
-    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT || '5432', 10),
-      username: process.env.DB_USERNAME || 'user',
-      password: process.env.DB_PASSWORD || 'password',
-      database: process.env.DB_DATABASE || 'mydatabase',
+      host: 'localhost',
+      port: 5432,
+      username: 'user',
+      password: 'password',
+      database: 'mydatabase',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       namingStrategy: new SnakeNamingStrategy(),

@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 // import { SeederService } from './seeder/seeder.service';
 import * as dotenv from 'dotenv';
-dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -10,7 +9,7 @@ async function bootstrap() {
       origin: true,
     },
   });
-  const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 8080;
+  const port = parseInt(dotenv.config()?.parsed?.PORT || '8080', 10);
   console.log(`Listening on port ${port}`);
   await app.listen(port);
 
