@@ -10,7 +10,7 @@ async function bootstrap() {
       origin: true,
     },
   });
-  const port = process.env.PORT || 8080;
+  const port = parseInt(process.env.PORT) || 8080;
   console.log(`Listening on port ${port}`);
   await app.listen(port);
 

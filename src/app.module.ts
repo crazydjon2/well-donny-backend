@@ -20,11 +20,11 @@ import { ConfigModule } from '@nestjs/config';
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DATABASE_HOST || 'localhost', // Используем переменную окружения
-      port: process.env.DATABASE_PORT ? +process.env.DATABASE_PORT : 5432, // Парсим в число
-      username: process.env.DATABASE_USER || 'user',
-      password: process.env.DATABASE_PASSWORD || 'password',
-      database: process.env.DATABASE_NAME || 'mydatabase',
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT || '5432', 10),
+      username: process.env.DB_USERNAME || 'user',
+      password: process.env.DB_PASSWORD || 'password',
+      database: process.env.DB_DATABASE || 'mydatabase',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       namingStrategy: new SnakeNamingStrategy(),
