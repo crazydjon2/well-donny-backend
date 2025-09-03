@@ -18,7 +18,7 @@ export class WordsService {
     return this.wordRepository.save(word);
   }
   async updateWord(word: UpdateWordDto): Promise<UpdateResult> {
-    return await this.wordRepository.update(word.id, {
+    return await this.wordRepository.update(word.id as string, {
       original: word.original,
       translated: word.translated,
     });
