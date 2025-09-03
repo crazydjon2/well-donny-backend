@@ -10,7 +10,7 @@ async function bootstrap() {
       origin: true,
     },
   });
-  await app.listen(process.env.APP_PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 3000);
 
   const seeder = app.get(SeederService);
   await seeder.seed();
