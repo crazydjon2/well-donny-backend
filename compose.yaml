@@ -28,7 +28,6 @@ services:
       POSTGRES_DB: mydatabase
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - db/scrpts:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
 

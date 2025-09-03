@@ -21,11 +21,11 @@ const env = dotenv.config()?.parsed;
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'user',
-      password: 'password',
-      database: 'mydatabase',
+      host: env?.DB_HOST || 'localhost',
+      port: parseInt(env?.DB_PORT || '5432', 10),
+      username: env?.DB_USERNAME || 'user',
+      password: env?.DB_PASSWORD || 'password',
+      database: env?.DB_DATABASE || 'mydatabase',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       namingStrategy: new SnakeNamingStrategy(),
