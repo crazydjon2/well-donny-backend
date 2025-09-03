@@ -8,6 +8,7 @@ import { UsersCategoriesModule } from 'src/users_categories/users-categories.mod
 // import { UserModule } from 'src/users/users.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { WordsModule } from 'src/words/words.module';
+import { CategoriesTypesModule } from 'src/categories_types/categories-types.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { WordsModule } from 'src/words/words.module';
     UsersCategoriesModule,
     AuthModule,
     WordsModule,
+    CategoriesTypesModule,
   ],
   providers: [CategoriesService],
   controllers: [CategoriesController],

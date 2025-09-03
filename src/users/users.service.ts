@@ -38,8 +38,7 @@ export class UserService {
   //   const user = users.find(user => +user.id === +id);
   //   return user ? JSON.stringify(user) : 'User not found';
   // }
-  createUser(userDTO: CreateUserDto): boolean {
-    this.usersRepository.create(userDTO);
-    return true;
+  async createUser(userDTO: CreateUserDto): Promise<User> {
+    return await this.usersRepository.save(userDTO);
   }
 }

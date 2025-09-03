@@ -24,12 +24,10 @@ export class CardsService {
     });
   }
   async createCard(card: CreateCardDto) {
-    console.log(card);
     const word = await this.wordService.createWord({
       original: card.word_original,
       translated: card.word_translated,
     });
-    console.log(word);
     return this.cardRepository.save({
       word,
       category: {

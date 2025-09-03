@@ -12,4 +12,11 @@ export class CategoriesTypesService {
   getCategoriesTypes() {
     return this.categoriesTypesRepository.find();
   }
+  async getTypeById(id: string) {
+    return await this.categoriesTypesRepository.findOne({
+      where: {
+        id,
+      },
+    });
+  }
 }

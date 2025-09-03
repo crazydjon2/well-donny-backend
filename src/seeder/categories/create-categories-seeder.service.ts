@@ -31,7 +31,6 @@ export class CreateCategoriesSeederService {
         },
       );
       const result = await this.categoryRepo.save(arr);
-      console.log('✅ Seeded categories');
       return result;
     }
     return this.categoryRepo.find();
