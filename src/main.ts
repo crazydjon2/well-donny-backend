@@ -10,7 +10,9 @@ async function bootstrap() {
       origin: true,
     },
   });
-  await app.listen(process.env.PORT ?? 8080);
+  const port = process.env.PORT || 8080;
+  console.log(`Listening on port ${port}`);
+  await app.listen(port);
 
   // const seeder = app.get(SeederService);
   // await seeder.seed();
