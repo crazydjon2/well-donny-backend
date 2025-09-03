@@ -9,6 +9,8 @@ async function bootstrap() {
       origin: true,
     },
   });
+  console.log(dotenv.config());
+  console.log(parseInt(dotenv.config()?.parsed?.PORT || '8080', 10));
   const port = parseInt(dotenv.config()?.parsed?.PORT || '8080', 10);
   console.log(`Listening on port ${port}`);
   await app.listen(port);
