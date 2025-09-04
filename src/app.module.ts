@@ -14,7 +14,7 @@ import { CategoriesTypesModule } from './categories_types/categories-types.modul
 // import { ConfigModule } from '@nestjs/config';
 import * as dotenv from 'dotenv';
 
-console.log(dotenv.config()?.parsed);
+console.log('BABAL', dotenv.config()?.parsed);
 
 const env = dotenv.config()?.parsed;
 console.log('SOSAL', process.env.DB_HOST);
