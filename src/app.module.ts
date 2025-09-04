@@ -11,22 +11,23 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { CardsModule } from './cards/cards.module';
 import { AuthModule } from './auth/auth.module';
 import { CategoriesTypesModule } from './categories_types/categories-types.module';
-// import { ConfigModule } from '@nestjs/config';
-import * as dotenv from 'dotenv';
+import { ConfigModule } from '@nestjs/config';
+// import * as dotenv from 'dotenv';
 
-console.log('BABAL', dotenv.config()?.parsed);
+console.log('BABAL', process.env);
 
-const env = dotenv.config()?.parsed;
+// const env = dotenv.config()?.parsed;
 console.log('SOSAL', process.env.DB_HOST);
 @Module({
   imports: [
+    ConfigModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: env?.DB_HOST || 'localhost',
-      port: parseInt(env?.DB_PORT || '5432', 10),
-      username: env?.DB_USERNAME || 'user',
-      password: env?.DB_PASSWORD || 'password',
-      database: env?.DB_DATABASE || 'mydatabase',
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT || '5432', 10),
+      username: process.env.DB_USERNAME || 'user',
+      password: process.env.DB_PASSWORD || 'password',
+      database: process.env.DB_DATABASE || 'mydatabase',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       namingStrategy: new SnakeNamingStrategy(),
