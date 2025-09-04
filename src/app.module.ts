@@ -17,6 +17,7 @@ import * as dotenv from 'dotenv';
 console.log(dotenv.config()?.parsed);
 
 const env = dotenv.config()?.parsed;
+console.log('SOSAL', process.env.DB_HOST);
 @Module({
   imports: [
     TypeOrmModule.forRoot({
