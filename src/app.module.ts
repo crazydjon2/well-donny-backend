@@ -17,17 +17,17 @@ import { ConfigModule } from '@nestjs/config';
 console.log('BABAL', process.env);
 
 // const env = dotenv.config()?.parsed;
-console.log('SOSAL', process.env.DB_HOST);
+console.log('SOSAL', process.env.DATABASE_HOST);
 @Module({
   imports: [
     ConfigModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT || '5432', 10),
-      username: process.env.DB_USERNAME || 'user',
-      password: process.env.DB_PASSWORD || 'password',
-      database: process.env.DB_DATABASE || 'mydatabase',
+      host: process.env.DATABASE_HOST || 'localhost',
+      port: parseInt(process.env.DATABASE_PORT || '5432', 10),
+      username: process.env.DATABASE_USERNAME || 'user',
+      password: process.env.DATABASE_PASSWORD || 'password',
+      database: process.env.DATABASE_DATABASE || 'mydatabase',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
       namingStrategy: new SnakeNamingStrategy(),

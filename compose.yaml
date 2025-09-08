@@ -1,23 +1,25 @@
 version: '3.8'
 
 services:
-  # app:
-  #   build:
-  #     context: . # Путь к вашему Dockerfile для Nest.js приложения
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "80:8080" # Мапим порт 8080 контейнера на порт 80 хоста
-  #   environment:
-  #     # Эти переменные окружения будут доступны внутри контейнера 'app'
-  #     DATABASE_HOST: db # Имя сервиса базы данных в Docker Compose
-  #     DATABASE_PORT: 5432
-  #     DATABASE_USER: user
-  #     DATABASE_PASSWORD: password
-  #     DATABASE_NAME: mydatabase
-  #     # Nest.js должен использовать этот порт
-  #     PORT: 8080
-  #   depends_on:
-  #     - db # Указываем, что 'app' зависит от 'db', чтобы 'db' запустился первым
+  app:
+    build:
+      context: . # Путь к вашему Dockerfile для Nest.js приложения
+      dockerfile: Dockerfile
+    ports:
+      - "80:8080" # Мапим порт 8080 контейнера на порт 80 хоста
+    environment:
+      # Эти переменные окружения будут доступны внутри контейнера 'app'
+      DATABASE_HOST: db # Имя сервиса базы данных в Docker Compose
+      DATABASE_PORT: 5432
+      DATABASE_USER: user
+      DATABASE_PASSWORD: password
+      DATABASE_NAME: mydatabase
+      # Nest.js должен использовать этот порт
+      PORT: 8080
+    networks:
+      - well-donny
+    depends_on:
+      - db # Указываем, что 'app' зависит от 'db', чтобы 'db' запустился первым
   db:
     image: postgres:15
     container_name: postgres_container
@@ -28,8 +30,12 @@ services:
       POSTGRES_DB: mydatabase
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - well-donny
     ports:
       - "5432:5432"
 
+networks:
+  well-donny:
 volumes:
   pgdata:
