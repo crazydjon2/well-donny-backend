@@ -32,6 +32,17 @@ export class UsersCategoriesService {
     return this.userCategoryRepo.save(userCategory);
   }
 
+  async removeCategoryFromUser(userId: string, categoryId: string) {
+    const user = await this.userRepo.findOneBy({ id: userId });
+    const category = await this.categoryRepo.findOneBy({ id: categoryId });
+
+    if (!user || !category) {
+      throw new NotFoundException('User or category not found');
+    }
+
+    return this.userCategoryRepo.delete({ user, category });
+  }
+
   async getCategoriesByUser(userId?: string, type?: string, role?: UserRole) {
     return this.userCategoryRepo.find({
       where: {
@@ -43,5 +54,20 @@ export class UsersCategoriesService {
       },
       relations: ['category', 'user', 'category.categoriesTypes'],
     });
+  }
+
+  async markAsDone(userId: string, categoryId: string) {
+    const category = await this.userCategoryRepo.findOne({
+      where: {
+        user: { id: userId },
+        category: {
+          id: categoryId,
+        },
+      },
+    });
+    if (category) {
+      category.completionСount = category.completionСount + 1;
+      return await this.userCategoryRepo.save(category);
+    }
   }
 }

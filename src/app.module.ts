@@ -12,12 +12,9 @@ import { CardsModule } from './cards/cards.module';
 import { AuthModule } from './auth/auth.module';
 import { CategoriesTypesModule } from './categories_types/categories-types.module';
 import { ConfigModule } from '@nestjs/config';
+import { TestWordsModule } from './test-words/test-words.module';
+import { UserLearningStrickModule } from './user-learning-strick/user-learning-strick.module';
 // import * as dotenv from 'dotenv';
-
-console.log('BABAL', process.env);
-
-// const env = dotenv.config()?.parsed;
-console.log('SOSAL', process.env.DATABASE_HOST);
 @Module({
   imports: [
     ConfigModule,
@@ -39,7 +36,9 @@ console.log('SOSAL', process.env.DATABASE_HOST);
     UsersCategoriesModule,
     CardsModule,
     CategoriesTypesModule,
+    TestWordsModule,
     AuthModule,
+    UserLearningStrickModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,4 +1,5 @@
 import { Card } from 'src/cards/card.entity';
+import { TestWord } from 'src/test-words/test-words.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -27,4 +28,7 @@ export class Word {
 
   @OneToMany(() => Card, (c) => c.id)
   card: Card;
+
+  @OneToMany(() => TestWord, (tw) => tw.id)
+  testWords: TestWord;
 }

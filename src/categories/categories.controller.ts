@@ -9,7 +9,10 @@ import {
   Query,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import { UsersCategories } from 'src/users_categories/users-categories.entity';
+import {
+  UserRole,
+  UsersCategories,
+} from 'src/users_categories/users-categories.entity';
 import { UserId } from 'src/common/decorators/user-id.decorator';
 import { CategoryDTO, CreateCategoryDto } from './dto';
 import { DeleteResult } from 'typeorm';
@@ -30,6 +33,8 @@ export class CategoriesController {
     @Query()
     query: {
       type: string;
+      userId: string;
+      role: UserRole;
     },
   ): Promise<UsersCategories[] | null> {
     return this.categoriesService.getAllCategories(query);

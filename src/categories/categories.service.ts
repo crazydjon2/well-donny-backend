@@ -34,13 +34,17 @@ export class CategoriesService {
   }
   async getAllCategories({
     type,
+    userId,
+    role,
   }: {
     type: string;
+    userId: string;
+    role: UserRole;
   }): Promise<UsersCategories[]> {
     return await this.usersCategoriesService.getCategoriesByUser(
-      undefined,
-      type,
-      UserRole.CREATOR,
+      userId || undefined,
+      type || undefined,
+      role || UserRole.CREATOR,
     );
   }
   async getCategoryById(id: string): Promise<CategoryDTO | null> {
