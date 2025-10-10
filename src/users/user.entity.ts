@@ -1,3 +1,4 @@
+import { UserLearningStrick } from 'src/user-learning-strick/user-learning-strick.entity';
 import { UsersCategories } from 'src/users_categories/users-categories.entity';
 import {
   Entity,
@@ -27,4 +28,7 @@ export class User {
 
   @OneToMany(() => UsersCategories, (uc) => uc.user)
   userCategories: UsersCategories[];
+
+  @OneToMany(() => UserLearningStrick, (ulc) => ulc.id)
+  userLearningStrick: UserLearningStrick;
 }

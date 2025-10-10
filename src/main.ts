@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 // import { SeederService } from './seeder/seeder.service';
 import * as dotenv from 'dotenv';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -9,10 +10,10 @@ async function bootstrap() {
       origin: true,
     },
   });
-  console.log(dotenv.config());
-  console.log(parseInt(dotenv.config()?.parsed?.PORT || '8080', 10));
+
   const port = parseInt(dotenv.config()?.parsed?.PORT || '8080', 10);
-  console.log(`Listening on port ${port}`);
+
+  app.useGlobalPipes(new ValidationPipe());
   await app.listen(port);
 
   // const seeder = app.get(SeederService);

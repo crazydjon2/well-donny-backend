@@ -26,6 +26,11 @@ export class UsersCategories {
   })
   role: UserRole;
 
+  @Column({
+    default: 0,
+  })
+  completionСount: number;
+
   @ManyToOne(() => User, (user) => user.userCategories, { onDelete: 'CASCADE' })
   user: User;
 
