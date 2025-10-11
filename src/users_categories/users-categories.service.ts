@@ -44,14 +44,24 @@ export class UsersCategoriesService {
   }
 
   async getCategoriesByUser(userId?: string, type?: string, role?: UserRole) {
+    const where: {
+      user: { id?: string };
+      role?: UserRole;
+      category?: { categoriesTypes: { id: string } };
+    } = { user: { id: userId } };
+
+    // Добавляем role если указано
+    if (role !== undefined && role !== null) {
+      where.role = role;
+    }
+
+    // Добавляем фильтр по типу категории если указано
+    if (type) {
+      where.category = { categoriesTypes: { id: type } };
+    }
+
     return this.userCategoryRepo.find({
-      where: {
-        user: { id: userId },
-        role,
-        category: {
-          categoriesTypes: { id: type },
-        },
-      },
+      where,
       relations: ['category', 'user', 'category.categoriesTypes'],
     });
   }

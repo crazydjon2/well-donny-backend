@@ -15,8 +15,5 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(port);
-
-  // const seeder = app.get(SeederService);
-  // await seeder.seed();
 }
 bootstrap();
