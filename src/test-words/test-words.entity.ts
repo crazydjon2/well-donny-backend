@@ -6,7 +6,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -19,7 +18,7 @@ export class TestWord {
   @ManyToOne(() => User, (u) => u.id)
   user: User;
 
-  @OneToOne(() => Word, (w) => w.id, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Word, (w) => w.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'word_id' })
   word: Word;
 

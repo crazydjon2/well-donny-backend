@@ -44,7 +44,7 @@ export class CategoriesService {
     return await this.usersCategoriesService.getCategoriesByUser(
       userId || undefined,
       type || undefined,
-      role || UserRole.CREATOR,
+      role || undefined,
     );
   }
   async getCategoryById(id: string): Promise<CategoryDTO | null> {
