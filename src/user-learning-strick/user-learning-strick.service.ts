@@ -55,8 +55,9 @@ export class UserLearningStrickService {
     }
   }
 
-  async getStricks(user_id: string, date: Date) {
-    const targetDate = new Date(date);
+  async getStricks(user_id: string, date: string) {
+    const decodedDate = decodeURIComponent(date);
+    const targetDate = new Date(decodedDate);
 
     const startDate = new Date(
       targetDate.getFullYear(),

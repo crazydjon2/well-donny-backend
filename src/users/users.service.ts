@@ -53,7 +53,7 @@ export class UserService {
       });
       const stricks = await this.userLearningStrickService.getStricks(
         userId,
-        new Date(),
+        new Date().toISOString(),
       );
 
       let d1: Date | null;

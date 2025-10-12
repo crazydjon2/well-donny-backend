@@ -15,9 +15,6 @@ export class UserLearningStrickController {
 
   @Get()
   getStrick(@UserId() user_id: string, @Query() query: { date: string }) {
-    return this.userLearningStrickService.getStricks(
-      user_id,
-      new Date(query.date),
-    );
+    return this.userLearningStrickService.getStricks(user_id, query.date);
   }
 }
