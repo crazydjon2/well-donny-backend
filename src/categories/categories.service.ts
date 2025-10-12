@@ -41,6 +41,7 @@ export class CategoriesService {
     userId: string;
     role: UserRole;
   }): Promise<UsersCategories[]> {
+    console.log(type, userId, role);
     return await this.usersCategoriesService.getCategoriesByUser(
       userId || undefined,
       type || undefined,
