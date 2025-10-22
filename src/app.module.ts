@@ -14,6 +14,8 @@ import { CategoriesTypesModule } from './categories_types/categories-types.modul
 import { ConfigModule } from '@nestjs/config';
 import { TestWordsModule } from './test-words/test-words.module';
 import { UserLearningStrickModule } from './user-learning-strick/user-learning-strick.module';
+import { FolderModule } from './folders/folder.module';
+import { FoldersCategoriesModule } from './folders-categories/folders-categories.module';
 // import * as dotenv from 'dotenv';
 @Module({
   imports: [
@@ -39,6 +41,8 @@ import { UserLearningStrickModule } from './user-learning-strick/user-learning-s
     TestWordsModule,
     AuthModule,
     UserLearningStrickModule,
+    FolderModule,
+    FoldersCategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

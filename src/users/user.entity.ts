@@ -1,3 +1,4 @@
+import { Folder } from 'src/folders/folder.entity';
 import { UserLearningStrick } from 'src/user-learning-strick/user-learning-strick.entity';
 import { UsersCategories } from 'src/users_categories/users-categories.entity';
 import {
@@ -31,4 +32,7 @@ export class User {
 
   @OneToMany(() => UserLearningStrick, (ulc) => ulc.id)
   userLearningStrick: UserLearningStrick;
+
+  @OneToMany(() => Folder, (f) => f.id)
+  folder: Folder;
 }

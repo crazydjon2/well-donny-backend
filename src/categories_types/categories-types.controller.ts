@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { CategoriesTypes } from './categories-types.entity';
 import { CategoriesTypesService } from './categories-types.service';
 
@@ -7,7 +7,9 @@ export class CategoriesTypesController {
   constructor(private categoriesTypesService: CategoriesTypesService) {}
 
   @Get()
-  getCategoriesType(): Promise<CategoriesTypes[]> {
-    return this.categoriesTypesService.getCategoriesTypes();
+  getCategoriesType(
+    @Query() query: { typeId: string },
+  ): Promise<CategoriesTypes[]> {
+    return this.categoriesTypesService.getCategoriesTypes(query);
   }
 }

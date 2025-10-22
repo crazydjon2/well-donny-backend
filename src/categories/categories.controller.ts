@@ -35,9 +35,21 @@ export class CategoriesController {
       type: string;
       userId: string;
       role: UserRole;
+      sort: 'ASC' | 'DESC';
+      folder: string;
     },
   ): Promise<UsersCategories[] | null> {
     return this.categoriesService.getAllCategories(query);
+  }
+
+  @Get('/by-type')
+  getCategoriesByType(
+    @Query()
+    query: {
+      typeId: string;
+    },
+  ): Promise<Record<string, UsersCategories[]>> {
+    return this.categoriesService.getByType(query.typeId);
   }
 
   @Get(':id')

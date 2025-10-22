@@ -2,8 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from 'src/categories/category.entity';
 import { User } from 'src/users/user.entity';
-import { Repository } from 'typeorm';
+import { FindOperator, In, Repository } from 'typeorm';
 import { UserRole, UsersCategories } from './users-categories.entity';
+import { FoldersCategoriesService } from 'src/folders-categories/folders-categories.service';
 
 @Injectable()
 export class UsersCategoriesService {
@@ -14,6 +15,7 @@ export class UsersCategoriesService {
     private readonly userRepo: Repository<User>,
     @InjectRepository(Category)
     private readonly categoryRepo: Repository<Category>,
+    private readonly foldersCategoriesService: FoldersCategoriesService,
   ) {}
 
   async addCategoryToUser(userId: string, categoryId: string, role: UserRole) {
@@ -43,27 +45,113 @@ export class UsersCategoriesService {
     return this.userCategoryRepo.delete({ user, category });
   }
 
-  async getCategoriesByUser(userId?: string, type?: string, role?: UserRole) {
+  async getCategoriesByUser(
+    userId?: string,
+    type?: string,
+    role?: UserRole,
+    sort?: 'ASC' | 'DESC',
+    folder?: string,
+  ) {
     const where: {
       user: { id?: string };
       role?: UserRole;
       category?: { categoriesTypes: { id: string } };
-    } = { user: { id: userId } };
+      id?: FindOperator<string>;
+      sort?: 'ASC' | 'DESC';
+    } = {
+      user: { id: userId },
+    };
 
-    // Добавляем role если указано
     if (role !== undefined && role !== null) {
       where.role = role;
     }
 
-    // Добавляем фильтр по типу категории если указано
     if (type) {
       where.category = { categoriesTypes: { id: type } };
     }
 
-    return this.userCategoryRepo.find({
+    if (folder) {
+      const categories =
+        await this.foldersCategoriesService.getCategoriesByFolder(folder);
+      if (categories.length) {
+        where.id = In(categories.map((c) => c.userCategory.category.id));
+      }
+    }
+
+    const userCategories = await this.userCategoryRepo.find({
       where,
-      relations: ['category', 'user', 'category.categoriesTypes'],
+      relations: [
+        'category',
+        'category.userCategories',
+        'category.userCategories.user', // все пользователи категории
+        'category.categoriesTypes',
+      ],
+      order: {
+        updatedAt: sort || 'DESC',
+      },
     });
+
+    // Для каждой категории находим создателя
+    return userCategories.map((uc) => {
+      const creator = uc.category.userCategories.find(
+        (uc) => uc.role === UserRole.CREATOR,
+      )?.user;
+
+      return {
+        ...uc,
+        user: creator || uc.user, // fallback на текущего user если создатель не найден
+      };
+    });
+  }
+
+  async getByType(typeId: string) {
+    const userCategories = await this.userCategoryRepo.find({
+      where: [
+        {
+          category: {
+            categoriesTypes: {
+              parent: {
+                id: typeId,
+              },
+            },
+          },
+        },
+        {
+          category: {
+            categoriesTypes: {
+              id: typeId,
+            },
+          },
+        },
+      ],
+      order: {
+        category: {
+          createdAt: 'DESC',
+        },
+      },
+      relations: [
+        'category',
+        'user',
+        'category.categoriesTypes',
+        'category.categoriesTypes.children',
+      ],
+    });
+
+    const grouped = userCategories.reduce<Record<string, UsersCategories[]>>(
+      (acc, userCategory) => {
+        const typeId = userCategory.category.categoriesTypes.type;
+
+        if (!acc[typeId]) {
+          acc[typeId] = [];
+        }
+
+        acc[typeId].push(userCategory);
+        return acc;
+      },
+      {},
+    );
+
+    return grouped;
   }
 
   async markAsDone(userId: string, categoryId: string) {

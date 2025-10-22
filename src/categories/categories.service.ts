@@ -36,18 +36,28 @@ export class CategoriesService {
     type,
     userId,
     role,
+    sort,
+    folder,
   }: {
     type: string;
     userId: string;
     role: UserRole;
+    sort: 'ASC' | 'DESC';
+    folder: string;
   }): Promise<UsersCategories[]> {
-    console.log(type, userId, role);
     return await this.usersCategoriesService.getCategoriesByUser(
       userId || undefined,
       type || undefined,
       role || undefined,
+      sort || undefined,
+      folder || undefined,
     );
   }
+
+  async getByType(typeId: string) {
+    return this.usersCategoriesService.getByType(typeId);
+  }
+
   async getCategoryById(id: string): Promise<CategoryDTO | null> {
     const category = await this.categoryRepository.findOne({
       relations: ['userCategories.user', 'categoriesTypes'],
