@@ -46,4 +46,7 @@ export class UsersCategories {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column({ nullable: true, default: 1 })
+  rate: number;
 }

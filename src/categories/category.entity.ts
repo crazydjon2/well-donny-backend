@@ -1,4 +1,5 @@
 import { CategoriesTypes } from 'src/categories_types/categories-types.entity';
+import { FolderCategory } from 'src/folders-categories/folder-category.entity';
 import { UsersCategories } from 'src/users_categories/users-categories.entity';
 import {
   Entity,
@@ -34,4 +35,7 @@ export class Category {
 
   @ManyToOne(() => CategoriesTypes, (ct) => ct.id)
   categoriesTypes: CategoriesTypes;
+
+  @OneToMany(() => FolderCategory, (fc) => fc.id)
+  folderCategory: FolderCategory;
 }

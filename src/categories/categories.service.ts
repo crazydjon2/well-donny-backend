@@ -12,6 +12,8 @@ import {
 import { CreateWordDto } from 'src/words/dto';
 import { toGetDTO } from './mappers/category.mapper';
 import { CategoriesTypesService } from 'src/categories_types/categories-types.service';
+import { EditCategoryDto } from './dto/edit.category.dto';
+import { WordsService } from 'src/words/words.service';
 
 @Injectable()
 export class CategoriesService {
@@ -21,6 +23,7 @@ export class CategoriesService {
     private cardsService: CardsService,
     private usersCategoriesService: UsersCategoriesService,
     private categoriesTypesService: CategoriesTypesService,
+    private wordsService: WordsService,
   ) {}
 
   async getUsersCategories(user_id: string): Promise<UsersCategories[] | null> {
@@ -60,7 +63,11 @@ export class CategoriesService {
 
   async getCategoryById(id: string): Promise<CategoryDTO | null> {
     const category = await this.categoryRepository.findOne({
-      relations: ['userCategories.user', 'categoriesTypes'],
+      relations: [
+        'userCategories.user',
+        'categoriesTypes',
+        'categoriesTypes.parent',
+      ],
       where: {
         id,
       },
@@ -100,6 +107,48 @@ export class CategoriesService {
         );
       }
       return null;
+    }
+
+    return null;
+  }
+
+  async editCategory(categoryDTO: EditCategoryDto) {
+    const type = await this.categoriesTypesService.getTypeById(
+      categoryDTO.type,
+    );
+    if (type) {
+      await this.categoryRepository.update(categoryDTO.id, {
+        name: categoryDTO.name,
+        description: categoryDTO.description,
+        categoriesTypes: type,
+      });
+
+      const wordsToEdit = categoryDTO.words.filter(
+        (word) => word.id && !word.toDelete,
+      );
+      const wordsToCreate = categoryDTO.words.filter((word) => !word.id);
+      const wordsToDelete = categoryDTO.words.filter((word) => word.toDelete);
+      if (wordsToEdit.length) {
+        wordsToEdit.forEach((word) => {
+          this.wordsService.updateWord(word);
+        });
+      }
+      if (wordsToCreate.length) {
+        await this.cardsService.createCards(
+          wordsToCreate.map((word: CreateWordDto) => {
+            return {
+              category_id: categoryDTO.id,
+              word_original: word.original,
+              word_translated: word.translated,
+            };
+          }),
+        );
+      }
+      if (wordsToDelete.length) {
+        await this.wordsService.deleteWord(
+          wordsToDelete.map((w) => w.id as string),
+        );
+      }
     }
 
     return null;

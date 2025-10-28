@@ -2,14 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { FolderCategory } from './folder-category.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UsersCategoriesService } from 'src/users_categories/users-categories.service';
 
 @Injectable()
 export class FoldersCategoriesService {
   constructor(
     @InjectRepository(FolderCategory)
     private folderCategoryRepository: Repository<FolderCategory>,
-    private readonly usersCategoriesService: UsersCategoriesService,
   ) {}
 
   async createFolderCategories(
@@ -17,17 +15,13 @@ export class FoldersCategoriesService {
     folder: string,
     categories: string[],
   ) {
-    const userCategories = (
-      await this.usersCategoriesService.getCategoriesByUser(userId)
-    ).filter((uc) => categories.includes(uc.category.id));
-
-    const folderCategoriesData = userCategories.map((uc) => {
+    const folderCategoriesData = categories.map((c) => {
       return {
         folder: {
           id: folder,
         },
-        userCategory: {
-          id: uc.id,
+        category: {
+          id: c,
         },
       };
     });
@@ -36,10 +30,27 @@ export class FoldersCategoriesService {
   }
 
   async getCategoriesByFolder(folderId: string) {
-    return this.folderCategoryRepository.find({
-      where: {
-        id: folderId,
-      },
+    const result: {
+      fc_id: string;
+      fc_category_id: string;
+      fc_folder_id: string;
+    }[] = await this.folderCategoryRepository
+      .createQueryBuilder('fc')
+      .innerJoin('fc.category', 'c')
+      .where('fc.folder.id = :folderId', { folderId })
+      .getRawMany();
+
+    console.log(result);
+    return result.map((r) => {
+      return {
+        id: r.fc_id,
+        category: {
+          id: r.fc_category_id,
+        },
+        folder: {
+          id: r.fc_folder_id,
+        },
+      };
     });
   }
 }

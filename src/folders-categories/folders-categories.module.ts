@@ -3,10 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FolderCategory } from './folder-category.entity';
 import { FoldersCategoriesController } from './folders-categories.controller';
 import { FoldersCategoriesService } from './folders-categories.service';
-import { UsersCategoriesModule } from 'src/users_categories/users-categories.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([FolderCategory]), UsersCategoriesModule],
+  imports: [TypeOrmModule.forFeature([FolderCategory])],
   controllers: [FoldersCategoriesController],
   providers: [FoldersCategoriesService],
   exports: [FoldersCategoriesService],

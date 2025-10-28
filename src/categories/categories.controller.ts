@@ -6,6 +6,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
@@ -16,6 +17,7 @@ import {
 import { UserId } from 'src/common/decorators/user-id.decorator';
 import { CategoryDTO, CreateCategoryDto } from './dto';
 import { DeleteResult } from 'typeorm';
+import { EditCategoryDto } from './dto/edit.category.dto';
 
 @Controller('categories')
 export class CategoriesController {
@@ -57,6 +59,14 @@ export class CategoriesController {
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<CategoryDTO | null> {
     return this.categoriesService.getCategoryById(id);
+  }
+
+  @Put(':id')
+  editCategory(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() categoryDTO: EditCategoryDto,
+  ): Promise<CategoryDTO | null> {
+    return this.categoriesService.editCategory(categoryDTO);
   }
 
   @Delete(':id')

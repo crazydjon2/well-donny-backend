@@ -55,8 +55,10 @@ export class UsersCategoriesService {
     const where: {
       user: { id?: string };
       role?: UserRole;
-      category?: { categoriesTypes: { id: string } };
-      id?: FindOperator<string>;
+      category?: {
+        id?: FindOperator<string>;
+        categoriesTypes?: { id: string };
+      };
       sort?: 'ASC' | 'DESC';
     } = {
       user: { id: userId },
@@ -74,7 +76,10 @@ export class UsersCategoriesService {
       const categories =
         await this.foldersCategoriesService.getCategoriesByFolder(folder);
       if (categories.length) {
-        where.id = In(categories.map((c) => c.userCategory.category.id));
+        if (!where.category) {
+          where.category = {};
+        }
+        where.category.id = In(categories.map((c) => c.category.id));
       }
     }
 
@@ -90,6 +95,8 @@ export class UsersCategoriesService {
         updatedAt: sort || 'DESC',
       },
     });
+
+    console.log(userCategories, where);
 
     // Для каждой категории находим создателя
     return userCategories.map((uc) => {
