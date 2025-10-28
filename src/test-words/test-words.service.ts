@@ -96,7 +96,7 @@ export class TestWordService {
       )
       .getRawMany();
 
-    this.generateContent();
+    // this.generateContent();
 
     return results
       .map((data) => {
@@ -109,24 +109,24 @@ export class TestWordService {
       .slice(0, 10);
   }
 
-  async generateContent() {
-    const GOOGLE_CLOUD_PROJECT = process.env.GOOGLE_CLOUD_PROJECT;
-    const GOOGLE_CLOUD_LOCATION = process.env.GOOGLE_CLOUD_LOCATION || 'global';
-    const client = new GoogleGenAI({
-      vertexai: true,
-      project: GOOGLE_CLOUD_PROJECT,
-      location: GOOGLE_CLOUD_LOCATION,
-    });
+  // async generateContent() {
+  //   const GOOGLE_CLOUD_PROJECT = process.env.GOOGLE_CLOUD_PROJECT;
+  //   const GOOGLE_CLOUD_LOCATION = process.env.GOOGLE_CLOUD_LOCATION || 'global';
+  //   const client = new GoogleGenAI({
+  //     vertexai: true,
+  //     project: GOOGLE_CLOUD_PROJECT,
+  //     location: GOOGLE_CLOUD_LOCATION,
+  //   });
 
-    const response = await client.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: 'How does AI work?',
-    });
+  //   const response = await client.models.generateContent({
+  //     model: 'gemini-2.5-flash',
+  //     contents: 'How does AI work?',
+  //   });
 
-    console.log(response.text);
+  //   console.log(response.text);
 
-    return response.text;
-  }
+  //   return response.text;
+  // }
 
   async getTestProgress(userId: string, categoryId: string) {
     const answeredCount = await this.testWordRepository.count({
