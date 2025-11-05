@@ -5,6 +5,33 @@ import { User } from 'src/users/user.entity';
 import { FindOperator, In, Repository } from 'typeorm';
 import { UserRole, UsersCategories } from './users-categories.entity';
 import { FoldersCategoriesService } from 'src/folders-categories/folders-categories.service';
+import {
+  CategoriesTypes,
+  CategoryType,
+} from 'src/categories_types/categories-types.entity';
+
+interface RawUserCategoryResult {
+  id: string;
+  role: string;
+  completionсount: number;
+  createdat: Date;
+  updatedat: Date;
+  rate: number | null;
+  userid: string;
+  usertgid: number;
+  username: string;
+  usercreatedat: Date;
+  userupdatedat: Date;
+  categoryid: string;
+  categoryname: string;
+  categorydescription: string;
+  categorycreatedat: Date;
+  categoryupdatedat: Date;
+  typeid: string;
+  typename: string;
+  children: any[];
+  averagerate: string | null;
+}
 
 @Injectable()
 export class UsersCategoriesService {
@@ -55,13 +82,18 @@ export class UsersCategoriesService {
     const where: {
       user: { id?: string };
       role?: UserRole;
-      category?: {
+      category: {
         id?: FindOperator<string>;
         categoriesTypes?: { id: string };
+        folders?: { id: string }[];
       };
       sort?: 'ASC' | 'DESC';
+      folders?: {
+        id: string;
+      }[];
     } = {
       user: { id: userId },
+      category: {},
     };
 
     if (role !== undefined && role !== null) {
@@ -69,18 +101,13 @@ export class UsersCategoriesService {
     }
 
     if (type) {
-      where.category = { categoriesTypes: { id: type } };
+      where.category = {
+        categoriesTypes: { id: type },
+      };
     }
 
     if (folder) {
-      const categories =
-        await this.foldersCategoriesService.getCategoriesByFolder(folder);
-      if (categories.length) {
-        if (!where.category) {
-          where.category = {};
-        }
-        where.category.id = In(categories.map((c) => c.category.id));
-      }
+      where.category.folders = [{ id: folder }];
     }
 
     const userCategories = await this.userCategoryRepo.find({
@@ -88,15 +115,13 @@ export class UsersCategoriesService {
       relations: [
         'category',
         'category.userCategories',
-        'category.userCategories.user', // все пользователи категории
+        'category.userCategories.user',
         'category.categoriesTypes',
       ],
       order: {
         updatedAt: sort || 'DESC',
       },
     });
-
-    console.log(userCategories, where);
 
     // Для каждой категории находим создателя
     return userCategories.map((uc) => {
@@ -111,48 +136,93 @@ export class UsersCategoriesService {
     });
   }
 
-  async getByType(typeId: string) {
-    const userCategories = await this.userCategoryRepo.find({
-      where: [
-        {
-          category: {
-            categoriesTypes: {
-              parent: {
-                id: typeId,
-              },
-            },
-          },
-        },
-        {
-          category: {
-            categoriesTypes: {
-              id: typeId,
-            },
-          },
-        },
-      ],
-      order: {
-        category: {
-          createdAt: 'DESC',
-        },
-      },
-      relations: [
-        'category',
-        'user',
-        'category.categoriesTypes',
-        'category.categoriesTypes.children',
-      ],
-    });
+  async getByType(typeId: string): Promise<Record<string, UsersCategories[]>> {
+    const result: RawUserCategoryResult[] = await this.userCategoryRepo
+      .createQueryBuilder('uc')
+      .leftJoinAndSelect('uc.category', 'category')
+      .leftJoinAndSelect('category.categoriesTypes', 'categoriesTypes')
+      .leftJoinAndSelect('uc.user', 'user')
+      .leftJoinAndSelect('categoriesTypes.children', 'children')
+      .where(
+        'categoriesTypes.id = :typeId OR categoriesTypes.parent.id = :typeId',
+        { typeId },
+      )
+      .andWhere('uc.role = :role', { role: UserRole.CREATOR }) // Оставляем фильтр здесь
+      .select([
+        'uc.id as id',
+        'uc.role as role',
+        'uc.completionсount as completionCount',
+        'uc.createdAt as createdAt',
+        'uc.updatedAt as updatedAt',
+        'uc.rate as rate',
+        'user.id as userId',
+        'user.tg_id as userTgId',
+        'user.name as userName',
+        'user.createdAt as userCreatedAt',
+        'user.updatedAt as userUpdatedAt',
+        'category.id as categoryId',
+        'category.name as categoryName',
+        'category.description as categoryDescription',
+        'category.createdAt as categoryCreatedAt',
+        'category.updatedAt as categoryUpdatedAt',
+        'categoriesTypes.id as typeId',
+        'categoriesTypes.type as typeName',
+        // Для правильного расчета средней оценки используем подзапрос или оконную функцию по всем записям
+        `(SELECT AVG(uc2.rate) FROM users_categories uc2 WHERE uc2.category_id = category.id) as averageRate`,
+      ])
+      .orderBy('categoriesTypes.type', 'ASC')
+      .addOrderBy('category.name', 'ASC')
+      .getRawMany();
 
-    const grouped = userCategories.reduce<Record<string, UsersCategories[]>>(
-      (acc, userCategory) => {
-        const typeId = userCategory.category.categoriesTypes.type;
+    // Группируем по типам категорий с правильной типизацией
+    const grouped: Record<string, UsersCategories[]> = result.reduce(
+      (acc: Record<string, UsersCategories[]>, item: RawUserCategoryResult) => {
+        const typeName = item.typename;
 
-        if (!acc[typeId]) {
-          acc[typeId] = [];
+        if (!acc[typeName]) {
+          acc[typeName] = [];
         }
 
-        acc[typeId].push(userCategory);
+        // Создаем UsersCategories
+        const userCategory = new UsersCategories();
+        userCategory.id = item.id;
+        userCategory.role = item.role as UserRole;
+        userCategory.completionСount = item.completionсount;
+        userCategory.createdAt = item.createdat;
+        userCategory.updatedAt = item.updatedat;
+        userCategory.rate = item.rate as number;
+
+        // Создаем User
+        userCategory.user = new User();
+        userCategory.user.id = item.userid;
+        userCategory.user.tg_id = item.usertgid;
+        userCategory.user.name = item.username;
+        userCategory.user.createdAt = item.usercreatedat;
+        userCategory.user.updatedAt = item.userupdatedat;
+
+        // Создаем Category
+        userCategory.category = new Category();
+        userCategory.category.id = item.categoryid;
+        userCategory.category.name = item.categoryname;
+        userCategory.category.description = item.categorydescription;
+        userCategory.category.createdAt = item.categorycreatedat;
+        userCategory.category.updatedAt = item.categoryupdatedat;
+
+        // Создаем CategoriesTypes для category
+        userCategory.category.categoriesTypes = new CategoriesTypes();
+        userCategory.category.categoriesTypes.id = item.typeid;
+        userCategory.category.categoriesTypes.type =
+          item.typename as CategoryType; // Приводим к enum типу
+        userCategory.category.categoriesTypes.children =
+          (item.children as CategoriesTypes[]) || ([] as CategoriesTypes[]);
+
+        // Добавляем averageRate как дополнительное поле (не часть entity)
+        (userCategory as any).averageRate = item.averagerate
+          ? parseFloat(item.averagerate)
+          : null;
+
+        acc[typeName].push(userCategory);
+
         return acc;
       },
       {},
@@ -172,6 +242,24 @@ export class UsersCategoriesService {
     });
     if (category) {
       category.completionСount = category.completionСount + 1;
+      return await this.userCategoryRepo.save(category);
+    }
+  }
+
+  async rateCategory(
+    userId: string,
+    dto: { categoryId: string; rate: number },
+  ) {
+    const category = await this.userCategoryRepo.findOne({
+      where: {
+        user: { id: userId },
+        category: {
+          id: dto.categoryId,
+        },
+      },
+    });
+    if (category) {
+      category.rate = dto.rate;
       return await this.userCategoryRepo.save(category);
     }
   }

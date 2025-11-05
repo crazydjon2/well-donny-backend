@@ -65,6 +65,7 @@ export class CategoriesService {
     const category = await this.categoryRepository.findOne({
       relations: [
         'userCategories.user',
+        'userCategories',
         'categoriesTypes',
         'categoriesTypes.parent',
       ],

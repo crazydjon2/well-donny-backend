@@ -40,7 +40,6 @@ export class FoldersCategoriesService {
       .where('fc.folder.id = :folderId', { folderId })
       .getRawMany();
 
-    console.log(result);
     return result.map((r) => {
       return {
         id: r.fc_id,

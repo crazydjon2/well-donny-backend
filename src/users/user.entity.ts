@@ -1,6 +1,7 @@
 import { Folder } from 'src/folders/folder.entity';
 import { UserLearningStrick } from 'src/user-learning-strick/user-learning-strick.entity';
 import { UsersCategories } from 'src/users_categories/users-categories.entity';
+import { Word } from 'src/words/word.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -8,7 +9,14 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  JoinTable,
+  ManyToMany,
 } from 'typeorm';
+
+export enum SupportedLanguage {
+  RUSSIAN = 'ru',
+  ENGLIGN = 'en',
+}
 
 @Entity('users')
 export class User {
@@ -20,6 +28,23 @@ export class User {
 
   @Column()
   name: string;
+
+  @Column({
+    type: 'enum',
+    enum: SupportedLanguage,
+    default: SupportedLanguage.RUSSIAN,
+  })
+  language: SupportedLanguage;
+
+  @Column({
+    default: true,
+  })
+  isPublic: boolean;
+
+  @Column({
+    default: true,
+  })
+  allowNotification: boolean;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -35,4 +60,12 @@ export class User {
 
   @OneToMany(() => Folder, (f) => f.id)
   folder: Folder;
+
+  @ManyToMany(() => Word)
+  @JoinTable({
+    name: 'favorite_words',
+    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'word_id', referencedColumnName: 'id' },
+  })
+  favoriteWords: Word[];
 }
