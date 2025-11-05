@@ -6,9 +6,13 @@ import { UserCategoryController } from './users-categories.controller';
 import { User } from '../users/user.entity';
 import { Category } from '../categories/category.entity';
 import { UsersCategoriesService } from './users-categories.service';
+import { FoldersCategoriesModule } from 'src/folders-categories/folders-categories.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UsersCategories, User, Category])],
+  imports: [
+    TypeOrmModule.forFeature([UsersCategories, User, Category]),
+    FoldersCategoriesModule,
+  ],
   providers: [UsersCategoriesService],
   controllers: [UserCategoryController],
   exports: [UsersCategoriesService],

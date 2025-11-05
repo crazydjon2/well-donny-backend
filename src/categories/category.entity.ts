@@ -1,4 +1,5 @@
 import { CategoriesTypes } from 'src/categories_types/categories-types.entity';
+import { Folder } from 'src/folders/folder.entity';
 import { UsersCategories } from 'src/users_categories/users-categories.entity';
 import {
   Entity,
@@ -8,6 +9,7 @@ import {
   UpdateDateColumn,
   OneToMany,
   ManyToOne,
+  ManyToMany,
 } from 'typeorm';
 
 @Entity('categories')
@@ -34,4 +36,7 @@ export class Category {
 
   @ManyToOne(() => CategoriesTypes, (ct) => ct.id)
   categoriesTypes: CategoriesTypes;
+
+  @ManyToMany(() => Folder, (f) => f.categories)
+  folders: Folder[];
 }

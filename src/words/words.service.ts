@@ -17,11 +17,15 @@ export class WordsService {
   createWords(word: CreateWordDto[]): Promise<Word[]> {
     return this.wordRepository.save(word);
   }
-  async updateWord(word: UpdateWordDto): Promise<UpdateResult> {
-    return await this.wordRepository.update(word.id as string, {
-      original: word.original,
-      translated: word.translated,
-    });
+  async updateWord(word: UpdateWordDto): Promise<UpdateResult | Word> {
+    if (word.id) {
+      return await this.wordRepository.update(word.id as string, {
+        original: word.original,
+        translated: word.translated,
+      });
+    } else {
+      return await this.createWord(word);
+    }
   }
   async deleteWord(ids: string[]): Promise<DeleteResult> {
     return await this.wordRepository.delete(ids);

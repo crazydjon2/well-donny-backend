@@ -35,4 +35,12 @@ export class UserCategoryController {
   ) {
     return this.service.markAsDone(user_id, dto.categoryId);
   }
+
+  @Put('/rate')
+  async rateCategory(
+    @UserId() userId: string,
+    @Body() dto: { rate: number; categoryId: string },
+  ) {
+    return this.service.rateCategory(userId, dto);
+  }
 }

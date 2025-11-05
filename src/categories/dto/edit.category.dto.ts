@@ -1,8 +1,10 @@
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
-import { CreateWordDto } from 'src/words/dto';
+import { UpdateWordDto } from 'src/words/dto';
 
-export class CreateCategoryDto {
+export class EditCategoryDto {
+  @IsString()
+  id: string;
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -12,6 +14,6 @@ export class CreateCategoryDto {
   type: string;
   // TODO ADD VALIDATOR FOR WORDS!
   @ValidateNested({ each: true })
-  @Type(() => CreateWordDto)
-  words: CreateWordDto[];
+  @Type(() => UpdateWordDto)
+  words: UpdateWordDto[];
 }

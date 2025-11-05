@@ -7,5 +7,6 @@ export class CategoryDTO {
   name: string;
   description: string;
   type: CategoriesTypes;
+  subtype?: CategoriesTypes;
   users: (User & { role: UserRole })[];
 }

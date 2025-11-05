@@ -1,8 +1,15 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+} from '@nestjs/common';
 import { UserService } from './users.service';
 // import { CreateUserDto } from './create-user.dto';
-import { User } from './user.entity';
-import { Request } from 'express';
+import { SupportedLanguage, User } from './user.entity';
 import { UserId } from 'src/common/decorators/user-id.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Public } from 'src/common/decorators/public.decorator';
@@ -32,8 +39,34 @@ export class UserController {
     return this.userService.createUser(userDTO);
   }
 
+  @Put('/edit')
+  editUser(
+    @Body()
+    dto: {
+      language: SupportedLanguage;
+      isPublic: boolean;
+      allowNotification: boolean;
+    },
+    @UserId() userId: string,
+  ) {
+    return this.userService.editUser(userId, dto);
+  }
+
   @Get(':id')
   getUserProfile(@Param('id') id: string) {
     return this.userService.getUserProfile(id);
+  }
+
+  @Put('/add-word')
+  addWordToFavorite(@UserId() userId: string, @Body() dto: { wordId: string }) {
+    return this.userService.addWordToFavorite(userId, dto.wordId);
+  }
+
+  @Delete('/remove-word')
+  deleteWordFromFaVorite(
+    @UserId() userId: string,
+    @Body() dto: { wordId: string },
+  ) {
+    return this.userService.removeWordFromFavorite(userId, dto.wordId);
   }
 }

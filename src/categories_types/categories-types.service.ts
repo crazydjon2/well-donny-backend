@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoriesTypes } from './categories-types.entity';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 @Injectable()
 export class CategoriesTypesService {
@@ -9,8 +9,15 @@ export class CategoriesTypesService {
     @InjectRepository(CategoriesTypes)
     private categoriesTypesRepository: Repository<CategoriesTypes>,
   ) {}
-  getCategoriesTypes() {
-    return this.categoriesTypesRepository.find();
+  getCategoriesTypes(query: { typeId: string }) {
+    return this.categoriesTypesRepository.find({
+      where: {
+        parent: {
+          id: query.typeId ? query.typeId : IsNull(),
+        },
+      },
+      relations: ['children'],
+    });
   }
   async getTypeById(id: string) {
     return await this.categoriesTypesRepository.findOne({

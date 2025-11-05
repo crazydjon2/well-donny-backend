@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class UpdateWordDto {
   @IsString()
@@ -9,4 +9,7 @@ export class UpdateWordDto {
   translated: string;
   @IsString()
   id;
+  @IsBoolean()
+  @IsOptional()
+  toDelete: boolean;
 }

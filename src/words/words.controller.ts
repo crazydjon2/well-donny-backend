@@ -2,13 +2,16 @@ import { Body, Controller, Delete, Put } from '@nestjs/common';
 import { WordsService } from './words.service';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import type { DeleteWordDto, UpdateWordDto } from './dto';
+import { Word } from './word.entity';
 
 @Controller('words')
 export class WordsController {
   constructor(private readonly wordsServie: WordsService) {}
 
   @Put('update')
-  updateWord(@Body() updateWordDto: UpdateWordDto): Promise<UpdateResult> {
+  updateWord(
+    @Body() updateWordDto: UpdateWordDto,
+  ): Promise<UpdateResult | Word> {
     return this.wordsServie.updateWord(updateWordDto);
   }
 

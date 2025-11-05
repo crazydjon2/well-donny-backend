@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './user.entity';
+import { SupportedLanguage, User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersCategories } from 'src/users_categories/users-categories.entity';
 import { UserLearningStrickService } from 'src/user-learning-strick/user-learning-strick.service';
@@ -35,6 +35,35 @@ export class UserService {
   }
   async createUser(userDTO: CreateUserDto): Promise<User> {
     return await this.usersRepository.save(userDTO);
+  }
+  async editUser(
+    userId: string,
+    dto: {
+      language: SupportedLanguage;
+      isPublic: boolean;
+      allowNotification: boolean;
+    },
+  ) {
+    return await this.usersRepository.update(userId, {
+      allowNotification: dto.allowNotification,
+      isPublic: dto.isPublic,
+      language: dto.language,
+    });
+  }
+  async addWordToFavorite(userId: string, wordId: string) {
+    return await this.usersRepository
+      .createQueryBuilder()
+      .relation(User, 'favoriteWords') // Указываем отношение
+      .of(userId) // Указываем пользователя
+      .add(wordId); // Добавляем слово
+  }
+
+  async removeWordFromFavorite(userId: string, wordId: string) {
+    return await this.usersRepository
+      .createQueryBuilder()
+      .relation(User, 'favoriteWords')
+      .of(userId)
+      .remove(wordId); // Удаляем слово
   }
 
   async getUserProfile(userId: string) {

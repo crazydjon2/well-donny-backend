@@ -7,9 +7,12 @@ export const toGetDTO = (category: Category): CategoryDTO => {
     name: category.name,
     description: category.description,
     type: category.categoriesTypes,
+    // userCategories: category.userCategories,
     users: category.userCategories.map((uc) => ({
       ...uc.user,
       role: uc.role,
+      rate: uc.rate,
+      completionСount: uc.completionСount,
     })),
   };
 
