@@ -32,8 +32,7 @@ export class CategoriesTypes {
   id: string;
 
   @Column({
-    type: 'enum',
-    enum: CategoryType,
+    type: 'varchar',
     default: CategoryType.LANGUAGE,
   })
   type: CategoryType;

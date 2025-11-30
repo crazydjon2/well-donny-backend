@@ -30,8 +30,7 @@ export class User {
   name: string;
 
   @Column({
-    type: 'enum',
-    enum: SupportedLanguage,
+    type: 'varchar',
     default: SupportedLanguage.RUSSIAN,
   })
   language: SupportedLanguage;

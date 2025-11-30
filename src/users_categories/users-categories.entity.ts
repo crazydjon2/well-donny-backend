@@ -22,8 +22,7 @@ export class UsersCategories {
   id: string;
 
   @Column({
-    type: 'enum',
-    enum: UserRole,
+    type: 'varchar',
     default: UserRole.CREATOR,
   })
   role: UserRole;
