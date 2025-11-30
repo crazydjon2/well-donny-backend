@@ -1,4 +1,17 @@
 {
-  "extends": "./tsconfig.json",
-  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
+"extends": "./tsconfig.json",
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts", "**/*.test.ts"],
+  "compilerOptions": {
+    "removeComments": true,
+    "sourceMap": false,
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "include": [
+    "src/**/*",
+    "src/i18n/**/*"
+  ],
+  "assets": [
+    "src/i18n/**/*"
+  ]
 }

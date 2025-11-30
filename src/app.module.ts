@@ -37,7 +37,7 @@ import { ErrorService } from './common/services/error.service';
     I18nModule.forRoot({
       fallbackLanguage: 'en',
       loaderOptions: {
-        path: path.resolve(process.cwd(), 'src', 'i18n'),
+        path: path.join(__dirname, 'i18n'),
         watch: true,
       },
       resolvers: [QueryResolver, new HeaderResolver(['x-lang'])], // Определяет язык по query-параметру, e.g. ?lang=ru
