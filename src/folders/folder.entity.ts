@@ -16,7 +16,7 @@ export class Folder {
   id: string;
 
   @Column()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'i18n::errors.validation.name.required' })
   name: string;
 
   @ManyToOne(() => User, (u) => u.id)

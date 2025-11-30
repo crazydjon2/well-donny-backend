@@ -9,24 +9,20 @@ import {
 } from '@nestjs/common';
 import { UserId } from 'src/common/decorators/user-id.decorator';
 import { FolderService } from './folder.service';
+import { CreateFolderDto } from './dto/create-folder.dto';
+import { EditFolderDto } from './dto/edit-folder.dto';
 
 @Controller('folder')
 export class FolderController {
   constructor(private readonly folderService: FolderService) {}
 
   @Post('/create')
-  createFolder(
-    @UserId() userId: string,
-    @Body() body: { name: string; categories: string[] },
-  ) {
+  createFolder(@UserId() userId: string, @Body() body: CreateFolderDto) {
     return this.folderService.createFolder(userId, body);
   }
 
-  @Put('/create')
-  editFolder(
-    @UserId() userId: string,
-    @Body() body: { name: string; categories: string[]; id: string },
-  ) {
+  @Put('/edit')
+  editFolder(@UserId() userId: string, @Body() body: EditFolderDto) {
     return this.folderService.editFolder(userId, body);
   }
 

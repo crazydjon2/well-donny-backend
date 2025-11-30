@@ -2,36 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from 'src/categories/category.entity';
 import { User } from 'src/users/user.entity';
-import { FindOperator, In, Repository } from 'typeorm';
+import { FindOperator, ILike, Repository } from 'typeorm';
 import { UserRole, UsersCategories } from './users-categories.entity';
 import { FoldersCategoriesService } from 'src/folders-categories/folders-categories.service';
-import {
-  CategoriesTypes,
-  CategoryType,
-} from 'src/categories_types/categories-types.entity';
-
-interface RawUserCategoryResult {
-  id: string;
-  role: string;
-  completionсount: number;
-  createdat: Date;
-  updatedat: Date;
-  rate: number | null;
-  userid: string;
-  usertgid: number;
-  username: string;
-  usercreatedat: Date;
-  userupdatedat: Date;
-  categoryid: string;
-  categoryname: string;
-  categorydescription: string;
-  categorycreatedat: Date;
-  categoryupdatedat: Date;
-  typeid: string;
-  typename: string;
-  children: any[];
-  averagerate: string | null;
-}
 
 @Injectable()
 export class UsersCategoriesService {
@@ -78,6 +51,7 @@ export class UsersCategoriesService {
     role?: UserRole,
     sort?: 'ASC' | 'DESC',
     folder?: string,
+    name?: string,
   ) {
     const where: {
       user: { id?: string };
@@ -91,6 +65,7 @@ export class UsersCategoriesService {
       folders?: {
         id: string;
       }[];
+      name?: FindOperator<string>;
     } = {
       user: { id: userId },
       category: {},
@@ -108,6 +83,10 @@ export class UsersCategoriesService {
 
     if (folder) {
       where.category.folders = [{ id: folder }];
+    }
+
+    if (name) {
+      where.name = ILike(`%${name}%`);
     }
 
     const userCategories = await this.userCategoryRepo.find({
@@ -136,101 +115,6 @@ export class UsersCategoriesService {
     });
   }
 
-  async getByType(typeId: string): Promise<Record<string, UsersCategories[]>> {
-    const result: RawUserCategoryResult[] = await this.userCategoryRepo
-      .createQueryBuilder('uc')
-      .leftJoinAndSelect('uc.category', 'category')
-      .leftJoinAndSelect('category.categoriesTypes', 'categoriesTypes')
-      .leftJoinAndSelect('uc.user', 'user')
-      .leftJoinAndSelect('categoriesTypes.children', 'children')
-      .where(
-        'categoriesTypes.id = :typeId OR categoriesTypes.parent.id = :typeId',
-        { typeId },
-      )
-      .andWhere('uc.role = :role', { role: UserRole.CREATOR }) // Оставляем фильтр здесь
-      .select([
-        'uc.id as id',
-        'uc.role as role',
-        'uc.completionсount as completionCount',
-        'uc.createdAt as createdAt',
-        'uc.updatedAt as updatedAt',
-        'uc.rate as rate',
-        'user.id as userId',
-        'user.tg_id as userTgId',
-        'user.name as userName',
-        'user.createdAt as userCreatedAt',
-        'user.updatedAt as userUpdatedAt',
-        'category.id as categoryId',
-        'category.name as categoryName',
-        'category.description as categoryDescription',
-        'category.createdAt as categoryCreatedAt',
-        'category.updatedAt as categoryUpdatedAt',
-        'categoriesTypes.id as typeId',
-        'categoriesTypes.type as typeName',
-        // Для правильного расчета средней оценки используем подзапрос или оконную функцию по всем записям
-        `(SELECT AVG(uc2.rate) FROM users_categories uc2 WHERE uc2.category_id = category.id) as averageRate`,
-      ])
-      .orderBy('categoriesTypes.type', 'ASC')
-      .addOrderBy('category.name', 'ASC')
-      .getRawMany();
-
-    // Группируем по типам категорий с правильной типизацией
-    const grouped: Record<string, UsersCategories[]> = result.reduce(
-      (acc: Record<string, UsersCategories[]>, item: RawUserCategoryResult) => {
-        const typeName = item.typename;
-
-        if (!acc[typeName]) {
-          acc[typeName] = [];
-        }
-
-        // Создаем UsersCategories
-        const userCategory = new UsersCategories();
-        userCategory.id = item.id;
-        userCategory.role = item.role as UserRole;
-        userCategory.completionСount = item.completionсount;
-        userCategory.createdAt = item.createdat;
-        userCategory.updatedAt = item.updatedat;
-        userCategory.rate = item.rate as number;
-
-        // Создаем User
-        userCategory.user = new User();
-        userCategory.user.id = item.userid;
-        userCategory.user.tg_id = item.usertgid;
-        userCategory.user.name = item.username;
-        userCategory.user.createdAt = item.usercreatedat;
-        userCategory.user.updatedAt = item.userupdatedat;
-
-        // Создаем Category
-        userCategory.category = new Category();
-        userCategory.category.id = item.categoryid;
-        userCategory.category.name = item.categoryname;
-        userCategory.category.description = item.categorydescription;
-        userCategory.category.createdAt = item.categorycreatedat;
-        userCategory.category.updatedAt = item.categoryupdatedat;
-
-        // Создаем CategoriesTypes для category
-        userCategory.category.categoriesTypes = new CategoriesTypes();
-        userCategory.category.categoriesTypes.id = item.typeid;
-        userCategory.category.categoriesTypes.type =
-          item.typename as CategoryType; // Приводим к enum типу
-        userCategory.category.categoriesTypes.children =
-          (item.children as CategoriesTypes[]) || ([] as CategoriesTypes[]);
-
-        // Добавляем averageRate как дополнительное поле (не часть entity)
-        (userCategory as any).averageRate = item.averagerate
-          ? parseFloat(item.averagerate)
-          : null;
-
-        acc[typeName].push(userCategory);
-
-        return acc;
-      },
-      {},
-    );
-
-    return grouped;
-  }
-
   async markAsDone(userId: string, categoryId: string) {
     const category = await this.userCategoryRepo.findOne({
       where: {
@@ -242,6 +126,21 @@ export class UsersCategoriesService {
     });
     if (category) {
       category.completionСount = category.completionСount + 1;
+      return await this.userCategoryRepo.save(category);
+    }
+  }
+
+  async setOrder(userId: string, categoryId: string, isReverse: boolean) {
+    const category = await this.userCategoryRepo.findOne({
+      where: {
+        user: { id: userId },
+        category: {
+          id: categoryId,
+        },
+      },
+    });
+    if (category) {
+      category.reverseOrder = isReverse;
       return await this.userCategoryRepo.save(category);
     }
   }
@@ -262,5 +161,16 @@ export class UsersCategoriesService {
       category.rate = dto.rate;
       return await this.userCategoryRepo.save(category);
     }
+  }
+
+  async getUserCategory(categoryId: string, userId: string) {
+    return await this.userCategoryRepo.findOne({
+      where: {
+        user: { id: userId },
+        category: {
+          id: categoryId,
+        },
+      },
+    });
   }
 }

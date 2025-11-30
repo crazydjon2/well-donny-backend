@@ -6,11 +6,11 @@ export class EditCategoryDto {
   @IsString()
   id: string;
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'i18n::errors.validation.name.required' })
   name: string;
   @IsString()
   description: string;
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'i18n::errors.validation.type.required' })
   type: string;
   // TODO ADD VALIDATOR FOR WORDS!
   @ValidateNested({ each: true })

@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Get, Param, Put } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Put,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import { UsersCategoriesService } from './users-categories.service';
 import { UserRole } from './users-categories.entity';
 import { UserId } from 'src/common/decorators/user-id.decorator';
@@ -28,12 +36,28 @@ export class UserCategoryController {
     return this.service.getCategoriesByUser(userId);
   }
 
+  @Get('/get/:id')
+  async getUserCategoryData(
+    @Param('id', ParseUUIDPipe) id: string,
+    @UserId() userId: string,
+  ) {
+    return this.service.getUserCategory(id, userId);
+  }
+
   @Put('/mark-as-done')
   async markAsDone(
     @Body() dto: { categoryId: string },
     @UserId() user_id: string,
   ) {
     return this.service.markAsDone(user_id, dto.categoryId);
+  }
+
+  @Put('/set-order')
+  async setOrder(
+    @Body() dto: { categoryId: string; reverse: boolean },
+    @UserId() user_id: string,
+  ) {
+    return this.service.setOrder(user_id, dto.categoryId, dto.reverse);
   }
 
   @Put('/rate')

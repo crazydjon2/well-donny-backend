@@ -49,9 +49,10 @@ export class CategoriesController {
     @Query()
     query: {
       typeId: string;
+      name: string;
     },
-  ): Promise<Record<string, UsersCategories[]>> {
-    return this.categoriesService.getByType(query.typeId);
+  ): Promise<Record<string, { id: string; items: UsersCategories[] }>> {
+    return this.categoriesService.getByType(query.typeId, query.name);
   }
 
   @Get(':id')

@@ -1,0 +1,18 @@
+{
+    "validation": {
+        "name": {
+            "required": "Название обязательно"
+        },
+        "type": {
+            "required": "Выберите тип"
+        },
+        "word": {
+            "original": "Это поле обязательно",
+            "translated": "Это поле обязательно"
+        },
+        "required": "This filed is required",
+        "array": {
+            "not-empty": "Выберите хотя бы один элемент"
+        }
+    }
+}

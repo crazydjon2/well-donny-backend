@@ -49,4 +49,7 @@ export class UsersCategories {
 
   @Column({ nullable: true })
   rate: number;
+
+  @Column({ default: false })
+  reverseOrder: boolean;
 }

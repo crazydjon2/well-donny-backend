@@ -16,6 +16,9 @@ import { TestWordsModule } from './test-words/test-words.module';
 import { UserLearningStrickModule } from './user-learning-strick/user-learning-strick.module';
 import { FolderModule } from './folders/folder.module';
 import { FoldersCategoriesModule } from './folders-categories/folders-categories.module';
+import { HeaderResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
+import * as path from 'path'; // ← Исправлено: * as path
+import { ErrorService } from './common/services/error.service';
 // import * as dotenv from 'dotenv';
 @Module({
   imports: [
@@ -31,6 +34,14 @@ import { FoldersCategoriesModule } from './folders-categories/folders-categories
       synchronize: true,
       namingStrategy: new SnakeNamingStrategy(),
     }),
+    I18nModule.forRoot({
+      fallbackLanguage: 'en',
+      loaderOptions: {
+        path: path.join(process.cwd(), 'src', 'i18n'),
+        watch: true,
+      },
+      resolvers: [QueryResolver, new HeaderResolver(['x-lang'])], // Определяет язык по query-параметру, e.g. ?lang=ru
+    }),
     UserModule,
     SeederModule,
     WordsModule,
@@ -45,6 +56,6 @@ import { FoldersCategoriesModule } from './folders-categories/folders-categories
     FoldersCategoriesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ErrorService],
 })
 export class AppModule {}
