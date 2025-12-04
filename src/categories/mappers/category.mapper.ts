@@ -11,11 +11,21 @@ export const toGetDTO = (category: Category): CategoryDTO => {
     name: category.name,
     description: category.description,
     type: category.categoriesTypes,
-    avarageRate: (
-      category.userCategories.reduce((acc: number, uc: UsersCategories) => {
-        return (uc.rate || 0) + acc;
-      }, 0) / category.userCategories.filter((uc) => uc.rate).length
-    ).toFixed(1),
+    avarageRate: (() => {
+      const ratedUserCategories = category.userCategories.filter(
+        (uc) => uc.rate,
+      );
+      if (ratedUserCategories.length === 0) return null;
+
+      const totalRates = ratedUserCategories.reduce(
+        (acc: number, uc: UsersCategories) => {
+          return (uc.rate || 0) + acc;
+        },
+        0,
+      );
+
+      return (totalRates / ratedUserCategories.length).toFixed(1);
+    })(),
     author: category.userCategories
       .map((uc) => ({
         ...uc.user,
@@ -24,7 +34,6 @@ export const toGetDTO = (category: Category): CategoryDTO => {
         completionСount: uc.completionСount,
       }))
       .filter((uc) => uc.role === UserRole.CREATOR)[0],
-    // userCategories: category.userCategories,
     users: category.userCategories.length,
   };
 

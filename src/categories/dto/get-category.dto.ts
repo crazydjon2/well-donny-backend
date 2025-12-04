@@ -8,7 +8,7 @@ export class CategoryDTO {
   description: string;
   type: CategoriesTypes;
   subtype?: CategoriesTypes;
-  avarageRate: string;
+  avarageRate: string | null;
   author: User & { role: UserRole };
   users: number;
 }
