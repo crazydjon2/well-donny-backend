@@ -54,8 +54,8 @@ export class FolderService {
         id,
       },
       relations: {
-        categories: true
-      }
+        categories: true,
+      },
     });
 
     return folder;

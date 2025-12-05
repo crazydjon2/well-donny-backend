@@ -1,0 +1,17 @@
+{
+        "language": "Language",
+        "english": "English",
+        "spanish": "Spanish",
+        "germany": "Germany",
+        "russian": "Russian",
+        "chinese": "Chinese",
+        "french": "French",
+
+        "science": "Science",
+        "math": "Math",
+        "biology": "Biology",
+        "physics": "Phisics",
+        "psychology": "Psychology",
+
+        "other": "Other"
+}

@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { TestWord } from './test-words.entity';
 import { Card } from 'src/cards/card.entity';
 import { PutWordDTO } from './dto/put-word.dto';
-import { GoogleGenAI } from '@google/genai';
 
 @Injectable()
 export class TestWordService {

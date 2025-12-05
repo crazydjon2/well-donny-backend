@@ -1,6 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { CategoriesTypes } from './categories-types.entity';
 import { CategoriesTypesService } from './categories-types.service';
+import { I18nLang } from 'nestjs-i18n';
+import { GetCategoryType } from './dto/get-types';
 
 @Controller('categories-types')
 export class CategoriesTypesController {
@@ -9,7 +10,8 @@ export class CategoriesTypesController {
   @Get()
   getCategoriesType(
     @Query() query: { typeId: string },
-  ): Promise<CategoriesTypes[]> {
-    return this.categoriesTypesService.getCategoriesTypes(query);
+    @I18nLang() lang: string,
+  ): Promise<GetCategoryType[]> {
+    return this.categoriesTypesService.getCategoriesTypes(query, lang);
   }
 }

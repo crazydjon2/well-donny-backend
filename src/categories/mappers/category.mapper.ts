@@ -4,13 +4,21 @@ import {
   UserRole,
   UsersCategories,
 } from 'src/users_categories/users-categories.entity';
+import { I18nService } from 'nestjs-i18n';
 
-export const toGetDTO = (category: Category): CategoryDTO => {
+export const toGetDTO = (
+  category: Category,
+  i18n: I18nService,
+): CategoryDTO => {
   const dto: CategoryDTO = {
     id: category.id,
     name: category.name,
     description: category.description,
-    type: category.categoriesTypes,
+    type: {
+      ...category.categoriesTypes,
+      name: i18n.t(`types.${category.categoriesTypes.type}`),
+      children: undefined,
+    },
     avarageRate: (() => {
       const ratedUserCategories = category.userCategories.filter(
         (uc) => uc.rate,

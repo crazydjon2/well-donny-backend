@@ -18,6 +18,7 @@ import { UserId } from 'src/common/decorators/user-id.decorator';
 import { CategoryDTO, CreateCategoryDto } from './dto';
 import { DeleteResult } from 'typeorm';
 import { EditCategoryDto } from './dto/edit.category.dto';
+import { GetByType } from './dto/get-by-type.dto';
 
 @Controller('categories')
 export class CategoriesController {
@@ -51,7 +52,7 @@ export class CategoriesController {
       typeId: string;
       name: string;
     },
-  ): Promise<Record<string, { id: string; items: UsersCategories[] }>> {
+  ): Promise<GetByType[]> {
     return this.categoriesService.getByType(query.typeId, query.name);
   }
 

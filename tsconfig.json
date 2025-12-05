@@ -19,7 +19,6 @@
     "noFallthroughCasesInSwitch": false
   },
   "include": [
-    "src/**/*",
-    "src/i18n/**/*"
-  ],
+    "src/**/*"
+  ]
 }

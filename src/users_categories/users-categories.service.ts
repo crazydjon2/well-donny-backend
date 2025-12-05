@@ -2,9 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from 'src/categories/category.entity';
 import { User } from 'src/users/user.entity';
-import { FindOperator, ILike, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserRole, UsersCategories } from './users-categories.entity';
-import { FoldersCategoriesService } from 'src/folders-categories/folders-categories.service';
+import { I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class UsersCategoriesService {
@@ -15,7 +15,7 @@ export class UsersCategoriesService {
     private readonly userRepo: Repository<User>,
     @InjectRepository(Category)
     private readonly categoryRepo: Repository<Category>,
-    private readonly foldersCategoriesService: FoldersCategoriesService,
+    private i18n: I18nService,
   ) {}
 
   async addCategoryToUser(userId: string, categoryId: string, role: UserRole) {
@@ -45,72 +45,91 @@ export class UsersCategoriesService {
     return this.userCategoryRepo.delete({ user, category });
   }
 
+  // users-categories.service.ts
+
   async getCategoriesByUser(
     userId?: string,
     type?: string,
     role?: UserRole,
-    sort?: 'ASC' | 'DESC',
+    sort: 'ASC' | 'DESC' = 'DESC',
     folder?: string,
     name?: string,
-  ) {
-    const where: {
-      user: { id?: string };
-      role?: UserRole;
-      category: {
-        id?: FindOperator<string>;
-        categoriesTypes?: { id: string };
-        folders?: { id: string }[];
-      };
-      sort?: 'ASC' | 'DESC';
-      folders?: {
-        id: string;
-      }[];
-      name?: FindOperator<string>;
-    } = {
-      user: { id: userId },
-      category: {},
-    };
+  ): Promise<any[]> {
+    const qb = this.userCategoryRepo.createQueryBuilder('uc');
 
+    qb.leftJoinAndSelect('uc.user', 'user')
+      .leftJoinAndSelect('uc.category', 'category')
+      .leftJoinAndSelect('category.categoriesTypes', 'categoriesTypes')
+      .leftJoinAndSelect('category.userCategories', 'allUserCategories') // все, кто в категории
+      .leftJoinAndSelect('allUserCategories.user', 'categoryUser');
+
+    // Фильтры
+    if (userId) {
+      qb.andWhere('uc.user_id = :userId', { userId });
+    }
     if (role !== undefined && role !== null) {
-      where.role = role;
+      qb.andWhere('uc.role = :role', { role });
     }
-
     if (type) {
-      where.category = {
-        categoriesTypes: { id: type },
-      };
+      qb.andWhere('categoriesTypes.id = :type', { type });
     }
-
     if (folder) {
-      where.category.folders = [{ id: folder }];
+      qb.innerJoinAndSelect('category.folders', 'folder');
+      qb.andWhere('folder.id = :folder', { folder });
     }
-
     if (name) {
-      where.name = ILike(`%${name}%`);
+      qb.andWhere('category.name ILIKE :name', { name: `%${name}%` });
     }
 
-    const userCategories = await this.userCategoryRepo.find({
-      where,
-      relations: [
-        'category',
-        'category.userCategories',
-        'category.userCategories.user',
-        'category.categoriesTypes',
-      ],
-      order: {
-        updatedAt: sort || 'DESC',
-      },
-    });
+    qb.orderBy('uc.updatedAt', sort);
 
-    // Для каждой категории находим создателя
+    const userCategories = await qb.getMany();
+
+    // Всё считаем в JS — просто, понятно, без ошибок
     return userCategories.map((uc) => {
-      const creator = uc.category.userCategories.find(
+      const category = uc.category;
+
+      // Считаем средний рейтинг
+      const ratings = category.userCategories
+        .map((uc) => uc.rate)
+        .filter((rate) => rate !== null && rate !== undefined);
+
+      const avgRate =
+        ratings.length > 0
+          ? Math.round(
+              (ratings.reduce((a, b) => a + b, 0) / ratings.length) * 10,
+            ) / 10
+          : null;
+
+      // Находим создателя
+      const creatorUc = category.userCategories.find(
         (uc) => uc.role === UserRole.CREATOR,
-      )?.user;
+      );
+      const creator = creatorUc?.user;
 
       return {
-        ...uc,
-        user: creator || uc.user, // fallback на текущего user если создатель не найден
+        id: uc.id,
+        role: uc.role,
+        completionСount: uc.completionСount,
+        rate: avgRate, // ← вот оно, среднее!
+        ratesCount: ratings.length, // ← сколько человек оценило
+        reverseOrder: uc.reverseOrder,
+        createdAt: uc.createdAt,
+        updatedAt: uc.updatedAt,
+
+        user: creator || uc.user, // создатель или текущий юзер
+
+        category: {
+          id: category.id,
+          name: category.name,
+          description: category.description,
+          folders: category.folders,
+          type: {
+            id: category.categoriesTypes.id,
+            type: category.categoriesTypes.type,
+            name: this.i18n.t(`types.${category.categoriesTypes.type}`),
+          },
+        },
       };
     });
   }
