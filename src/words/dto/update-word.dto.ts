@@ -8,7 +8,6 @@ export class UpdateWordDto {
   @IsNotEmpty({ message: 'i18n::errors.validation.word.translated' })
   translated: string;
   @IsString()
-  @IsNotEmpty({ message: 'i18n::errors.validation.word.translated' })
   id;
   @IsBoolean()
   @IsOptional()
