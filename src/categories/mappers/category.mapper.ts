@@ -18,9 +18,9 @@ export const toGetDTO = (
       ...category.categoriesTypes,
       name: i18n.t(`types.${category.categoriesTypes.type}`),
       parent: {
-        id: category.categoriesTypes.parent.id,
-        type: category.categoriesTypes.parent.type,
-        name: i18n.t(`types.${category.categoriesTypes.parent.type}`),
+        id: category.categoriesTypes.parent?.id || '',
+        type: category.categoriesTypes.parent?.type || '',
+        name: i18n.t(`types.${category.categoriesTypes.parent?.type || ''}`),
       },
       children: undefined,
     },

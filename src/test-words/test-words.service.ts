@@ -83,7 +83,8 @@ export class TestWordService {
         'testWord.failierCounter as testWord_failierCounter',
         'testWord.successCounter as testWord_successCounter',
       ])
-      .orderBy(
+      .orderBy('word.created_at', 'DESC')
+      .addOrderBy(
         `
     CASE 
       WHEN "testWord"."is_answered" = false THEN 1

@@ -12,6 +12,5 @@
     "sourceMap": false,
     "outDir": "./dist",
     "rootDir": "./src"
-  },
-  "include": ["src/**/*"]
+  }
 }

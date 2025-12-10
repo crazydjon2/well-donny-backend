@@ -42,7 +42,8 @@ export class CardsService {
           .where('fw.word_id = word.id')
           .andWhere('fw.user_id = :userId', { userId })
           .limit(1);
-      }, 'isFavorite');
+      }, 'isFavorite')
+      .addOrderBy('word.createdAt', 'DESC');
 
     const result: CardRaw[] = await query.getRawMany();
 
