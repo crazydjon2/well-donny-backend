@@ -15,7 +15,7 @@ services:
       DATABASE_PASSWORD: password
       DATABASE_NAME: mydatabase
       # Nest.js должен использовать этот порт
-      PORT: 8080
+      PORT: 55562
     networks:
       - well-donny
     depends_on:
