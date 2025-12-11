@@ -6,7 +6,7 @@ services:
       context: . # Путь к вашему Dockerfile для Nest.js приложения
       dockerfile: Dockerfile
     ports:
-      - "80:8080" # Мапим порт 8080 контейнера на порт 80 хоста
+      - "55562:55562" # Мапим порт 8080 контейнера на порт 80 хоста
     environment:
       # Эти переменные окружения будут доступны внутри контейнера 'app'
       DATABASE_HOST: db # Имя сервиса базы данных в Docker Compose
