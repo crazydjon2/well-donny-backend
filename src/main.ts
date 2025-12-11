@@ -1,8 +1,12 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 // import { SeederService } from './seeder/seeder.service';
 import * as dotenv from 'dotenv';
-import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import {
+  BadRequestException,
+  ClassSerializerInterceptor,
+  ValidationPipe,
+} from '@nestjs/common';
 import { ErrorService } from './common/services/error.service';
 
 async function bootstrap() {
@@ -14,6 +18,7 @@ async function bootstrap() {
 
   const errorService = app.get(ErrorService);
   const port = parseInt(dotenv.config()?.parsed?.PORT || '8080', 10);
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   app.useGlobalPipes(
     new ValidationPipe({

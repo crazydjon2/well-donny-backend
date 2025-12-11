@@ -10,6 +10,9 @@
             "original": "This filed is required",
             "translated": "This filed is required"
         },
+                "words": {
+            "minSize": "At least 3 cards"
+        },
         "required": "This filed is required",
         "array": {
             "not-empty": "You should pick at least one item"

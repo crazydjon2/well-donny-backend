@@ -6,11 +6,5 @@
     "dist",
     "**/*spec.ts",
     "**/*.test.ts"
-  ],
-  "compilerOptions": {
-    "removeComments": true,
-    "sourceMap": false,
-    "outDir": "./dist",
-    "rootDir": "./src"
-  }
+  ]
 }

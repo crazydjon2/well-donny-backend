@@ -1,5 +1,10 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+import {
+  ArrayMinSize,
+  IsNotEmpty,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { CreateWordDto } from 'src/words/dto';
 
 export class CreateCategoryDto {
@@ -12,6 +17,7 @@ export class CreateCategoryDto {
   type: string;
   // TODO ADD VALIDATOR FOR WORDS!
   @ValidateNested({ each: true })
+  @ArrayMinSize(3, { message: 'i18n::errors.validation.words.minSize' })
   @Type(() => CreateWordDto)
   words: CreateWordDto[];
 }

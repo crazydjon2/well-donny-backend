@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { Folder } from 'src/folders/folder.entity';
 import { UserLearningStrick } from 'src/user-learning-strick/user-learning-strick.entity';
 import { UsersCategories } from 'src/users_categories/users-categories.entity';
@@ -24,6 +25,7 @@ export class User {
   id: string;
 
   @Column()
+  @Exclude()
   tg_id: number;
 
   @Column()

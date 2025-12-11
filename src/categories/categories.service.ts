@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { Category } from './category.entity';
@@ -177,6 +177,14 @@ export class CategoriesService {
   }
 
   async editCategory(categoryDTO: EditCategoryDto) {
+    if (categoryDTO.words.filter((w) => !w.toDelete).length < 3) {
+      throw new BadRequestException({
+        message: 'Validation failed',
+        errors: {
+          words: [this.i18n.t('errors.validation.words.minSize')],
+        },
+      });
+    }
     const type = await this.categoriesTypesService.getTypeById(
       categoryDTO.type,
     );

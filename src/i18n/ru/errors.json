@@ -10,6 +10,9 @@
             "original": "Это поле обязательно",
             "translated": "Это поле обязательно"
         },
+        "words": {
+            "minSize": "Как минимум 3 карточки"
+        },
         "required": "This filed is required",
         "array": {
             "not-empty": "Выберите хотя бы один элемент"
