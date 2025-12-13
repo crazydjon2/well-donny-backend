@@ -45,7 +45,7 @@ export class CategoriesService {
 
     if (folder) {
       query.leftJoinAndSelect('category.folders', 'folders');
-      query.andWhere(':folder = ANY(folders.id)', { folder });
+      query.andWhere(':folder = folders.id', { folder });
     }
 
     if (type) {
