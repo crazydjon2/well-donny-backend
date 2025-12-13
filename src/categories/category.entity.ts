@@ -34,7 +34,7 @@ export class Category {
   })
   userCategories: UsersCategories[];
 
-  @ManyToOne(() => CategoriesTypes, (ct) => ct.id)
+  @ManyToOne(() => CategoriesTypes, (ct) => ct.categories)
   categoriesTypes: CategoriesTypes;
 
   @ManyToMany(() => Folder, (f) => f.categories)

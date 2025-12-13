@@ -46,6 +46,6 @@ export class CategoriesTypes {
   @OneToMany(() => CategoriesTypes, (type) => type.parent)
   children: CategoriesTypes[];
 
-  @OneToMany(() => Category, (c) => c.id)
-  category: Category;
+  @OneToMany(() => Category, (c) => c.categoriesTypes)
+  categories: Category[];
 }

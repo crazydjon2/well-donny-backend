@@ -1,11 +1,13 @@
 import { GetCategoryType } from 'src/categories_types/dto/get-types';
-import { UsersCategories } from 'src/users_categories/users-categories.entity';
+import { GetCategories } from './get-categories.dto';
+import { PaginationDTO } from 'src/common/dto/pagination.dto';
+
+export class GetByTypeDTO extends PaginationDTO {
+  typeId: string;
+  name: string;
+}
 
 export class GetByType {
   type: GetCategoryType;
-  items: (UsersCategories & {
-    category: {
-      type: GetCategoryType;
-    };
-  })[];
+  items: GetCategories[];
 }

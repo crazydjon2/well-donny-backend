@@ -31,11 +31,6 @@ export class UserCategoryController {
     return this.service.removeCategoryFromUser(dto.userId, dto.categoryId);
   }
 
-  @Get(':userId')
-  async getCategories(@Param('userId') userId: string) {
-    return this.service.getCategoriesByUser(userId);
-  }
-
   @Get('/get/:id')
   async getUserCategoryData(
     @Param('id', ParseUUIDPipe) id: string,

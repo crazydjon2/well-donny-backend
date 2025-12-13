@@ -10,50 +10,37 @@ import {
   Query,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import {
-  UserRole,
-  UsersCategories,
-} from 'src/users_categories/users-categories.entity';
 import { UserId } from 'src/common/decorators/user-id.decorator';
 import { CategoryDTO, CreateCategoryDto } from './dto';
 import { DeleteResult } from 'typeorm';
 import { EditCategoryDto } from './dto/edit.category.dto';
-import { GetByType } from './dto/get-by-type.dto';
+import { GetByType, GetByTypeDTO } from './dto/get-by-type.dto';
+import { GetCategories, GetCategoriesDTO } from './dto/get-categories.dto';
 
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
-  @Get()
-  getUsersCategories(
-    @UserId() user_id: string,
-  ): Promise<UsersCategories[] | null> {
-    return this.categoriesService.getUsersCategories(user_id);
-  }
-
   @Get('/all')
   getAllCategories(
     @Query()
-    query: {
-      type: string;
-      userId: string;
-      role: UserRole;
-      sort: 'ASC' | 'DESC';
-      folder: string;
-    },
-  ): Promise<UsersCategories[] | null> {
+    query: GetCategoriesDTO,
+  ): Promise<GetCategories[] | null> {
+    console.log(query);
     return this.categoriesService.getAllCategories(query);
   }
 
   @Get('/by-type')
   getCategoriesByType(
     @Query()
-    query: {
-      typeId: string;
-      name: string;
-    },
+    query: GetByTypeDTO,
   ): Promise<GetByType[]> {
-    return this.categoriesService.getByType(query.typeId, query.name);
+    return this.categoriesService.getByType(
+      query.typeId,
+      query.name,
+      query.page,
+      query.size,
+    );
   }
 
   @Get(':id')

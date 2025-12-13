@@ -1,5 +1,5 @@
 import { GetCategoryType } from 'src/categories_types/dto/get-types';
-import { User } from 'src/users/user.entity';
+import { GetUserDto } from 'src/users/dto/get-user.dto';
 import { UserRole } from 'src/users_categories/users-categories.entity';
 
 export class CategoryDTO {
@@ -9,6 +9,6 @@ export class CategoryDTO {
   type: GetCategoryType;
   subtype?: GetCategoryType;
   avarageRate: string | null;
-  author: User & { role: UserRole };
+  author: GetUserDto & { role: UserRole };
   users: number;
 }

@@ -15,7 +15,7 @@ export class TestWord {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (u) => u.id)
+  @ManyToOne(() => User, (u) => u.id, { onDelete: 'CASCADE' })
   user: User;
 
   @ManyToOne(() => Word, (w) => w.id, { onDelete: 'CASCADE' })
