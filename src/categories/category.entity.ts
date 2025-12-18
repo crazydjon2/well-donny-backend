@@ -37,6 +37,6 @@ export class Category {
   @ManyToOne(() => CategoriesTypes, (ct) => ct.categories)
   categoriesTypes: CategoriesTypes;
 
-  @ManyToMany(() => Folder, (f) => f.categories)
+  @ManyToMany(() => Folder, (f) => f.categories, { onDelete: 'CASCADE' })
   folders: Folder[];
 }

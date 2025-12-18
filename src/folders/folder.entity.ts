@@ -22,7 +22,7 @@ export class Folder {
   @ManyToOne(() => User, (u) => u.id)
   user: User;
 
-  @ManyToMany(() => Category, (c) => c.folders)
+  @ManyToMany(() => Category, (c) => c.folders, { onDelete: 'CASCADE' })
   @JoinTable()
   categories: Category[];
 }

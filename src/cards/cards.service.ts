@@ -7,10 +7,16 @@ import { CreateCardDto } from './dto';
 
 interface CardRaw {
   card_id: string;
+
   word_id: string;
   word_original: string;
   word_translated: string;
-  isFavorite: boolean | null; // добавляем поле isFavorite
+
+  isfavorite: number | null;
+
+  testword_isanswered: boolean | null;
+  testword_failiercounter: number | null;
+  testword_successcounter: number | null;
 }
 
 @Injectable()
@@ -22,42 +28,73 @@ export class CardsService {
   ) {}
   async getCardsByCategory(categoryId: string, userId?: string) {
     if (!userId) {
-      // Если userId не передан, возвращаем просто карточки без статуса избранного
       return this.cardRepository.find({
         relations: ['word'],
         where: { category: { id: categoryId } },
       });
     }
 
-    // Используем QueryBuilder для добавления поля isFavorite
     const query = this.cardRepository
       .createQueryBuilder('card')
-      .leftJoinAndSelect('card.word', 'word')
-      .leftJoinAndSelect('card.category', 'category')
+      .leftJoin('card.word', 'word')
+      .leftJoin('card.category', 'category')
+
+      // статистика
+      .leftJoin(
+        'test_words',
+        'testword',
+        `
+    testword.word_id = word.id
+    AND testword.user_id = :userId
+    AND testword.category_id::uuid = :categoryId
+  `,
+        { userId, categoryId },
+      )
+
+      // избранное
+      .leftJoin(
+        'favorite_words',
+        'fw',
+        'fw.word_id = word.id AND fw.user_id = :userId',
+        { userId },
+      )
+
       .where('category.id = :categoryId', { categoryId })
-      .addSelect((subQuery) => {
-        return subQuery
-          .select('1')
-          .from('favorite_words', 'fw')
-          .where('fw.word_id = word.id')
-          .andWhere('fw.user_id = :userId', { userId })
-          .limit(1);
-      }, 'isFavorite')
-      .addOrderBy('word.createdAt', 'DESC');
 
-    const result: CardRaw[] = await query.getRawMany();
+      .select([
+        'card.id AS card_id',
 
-    // Преобразуем raw результат в нормализованный вид
-    return result.map((row) => ({
+        'word.id AS word_id',
+        'word.original AS word_original',
+        'word.translated AS word_translated',
+
+        'fw.word_id AS isFavorite',
+
+        'testword.isAnswered AS testword_isanswered',
+        'testword.failierCounter AS testword_failiercounter',
+        'testword.successCounter AS testword_successcounter',
+      ])
+
+      .orderBy('word.createdAt', 'DESC');
+
+    const raw: CardRaw[] = await query.getRawMany();
+
+    return raw.map((row) => ({
       id: row.card_id,
       word: {
         id: row.word_id,
         original: row.word_original,
         translated: row.word_translated,
-        isFavorite: !!row.isFavorite, // добавляем поле isFavorite
+        isFavorite: !!row.isfavorite,
+      },
+      stats: {
+        isAnswered: row.testword_isanswered ?? false,
+        failierCounter: row.testword_failiercounter ?? 0,
+        successCounter: row.testword_successcounter ?? 0,
       },
     }));
   }
+
   async createCard(card: CreateCardDto) {
     const word = await this.wordService.createWord({
       original: card.word_original,
