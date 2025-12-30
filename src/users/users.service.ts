@@ -85,19 +85,36 @@ export class UserService {
         new Date().toISOString(),
       );
 
-      let d1: Date | null;
-      let d2: Date | null;
       let diffDays: number = 0;
 
       if (stricks.length) {
-        d1 = new Date(stricks[stricks.length - 1][0]);
-        d2 = new Date(stricks[stricks.length - 1][1]);
+        const [start, end] = stricks[stricks.length - 1];
 
-        const utc1 = Date.UTC(d1.getFullYear(), d1.getMonth(), d1.getDate());
-        const utc2 = Date.UTC(d2.getFullYear(), d2.getMonth(), d2.getDate());
+        const d1 = new Date(start);
+        const d2 = new Date(end);
+        const today = new Date();
 
-        diffDays =
-          Math.floor(Math.abs(utc2 - utc1) / (1000 * 60 * 60 * 24)) + 1; // + 1 because start day included
+        const d1UTC = Date.UTC(d1.getFullYear(), d1.getMonth(), d1.getDate());
+        const d2UTC = Date.UTC(d2.getFullYear(), d2.getMonth(), d2.getDate());
+        const todayUTC = Date.UTC(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+        );
+        const yesterdayUTC = todayUTC - 24 * 60 * 60 * 1000;
+
+        if (d1UTC === todayUTC && d2UTC === todayUTC) {
+          diffDays = 1;
+        }
+        // 2️⃣ d2 === today или вчера
+        else if (d2UTC === todayUTC || d2UTC === yesterdayUTC) {
+          diffDays =
+            Math.floor(Math.abs(d2UTC - d1UTC) / (1000 * 60 * 60 * 24)) + 1;
+        }
+        // 3️⃣ d2 не вчера и не сегодня
+        else {
+          diffDays = 0;
+        }
       }
       return {
         ...user,

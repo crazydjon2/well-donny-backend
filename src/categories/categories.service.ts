@@ -37,10 +37,7 @@ export class CategoriesService {
     const { folder, userId, type, name, role, sort, page, size } = dto;
 
     if (userId) {
-      query.andWhere(
-        'EXISTS (SELECT 1 FROM users_categories uc WHERE uc.category_id = category.id AND uc.user_id = :userId)',
-        { userId },
-      );
+      query.andWhere('user.id = :userId', { userId });
     }
 
     if (folder) {
@@ -78,20 +75,10 @@ export class CategoriesService {
       const userRoleInCategory = currentUserRelation?.role || null;
 
       // Находим автора — первого с ролью CREATOR
-      const creatorRelation = ucRelations.find(
-        (uc) => uc.role === UserRole.CREATOR,
-      );
-      const author = creatorRelation?.user || null;
+      const author =
+        (await this.usersCategoriesService.getAuthor(category.id)) || null;
 
-      // Считаем средний рейтинг (только где rate не null)
-      const rates = ucRelations
-        .map((uc) => uc.rate)
-        .filter((r): r is number => r !== null && r !== undefined);
-
-      const avgRate =
-        rates.length > 0
-          ? Number((rates.reduce((a, b) => a + b, 0) / rates.length).toFixed(1))
-          : null;
+      const avgRate = await this.usersCategoriesService.getAvgRate(category.id);
 
       result.push({
         id: category.id,

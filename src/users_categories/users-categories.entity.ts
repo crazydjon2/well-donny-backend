@@ -51,4 +51,7 @@ export class UsersCategories {
 
   @Column({ default: false })
   reverseOrder: boolean;
+
+  @Column({ default: 0 })
+  cardPosition: number;
 }

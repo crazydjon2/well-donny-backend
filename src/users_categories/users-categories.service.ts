@@ -103,4 +103,56 @@ export class UsersCategoriesService {
       },
     });
   }
+
+  async setCardsPosition(userId: string, categoryId: string, position: number) {
+    const uc = await this.userCategoryRepo.findOne({
+      where: {
+        category: {
+          id: categoryId,
+        },
+        user: {
+          id: userId,
+        },
+      },
+    });
+    if (uc) {
+      uc.cardPosition = position;
+      return await this.userCategoryRepo.save(uc);
+    }
+  }
+
+  async getAvgRate(categoryId: string) {
+    const uc = await this.userCategoryRepo.find({
+      where: {
+        category: {
+          id: categoryId,
+        },
+      },
+    });
+    if (uc.length) {
+      const rates = uc
+        .map((uc) => uc.rate)
+        .filter((r): r is number => r !== null && r !== undefined);
+
+      const avgRate =
+        rates.length > 0
+          ? Number((rates.reduce((a, b) => a + b, 0) / rates.length).toFixed(1))
+          : null;
+      return avgRate;
+    }
+    return null;
+  }
+
+  async getAuthor(categoryId: string) {
+    const uc = await this.userCategoryRepo.findOne({
+      where: {
+        category: {
+          id: categoryId,
+        },
+        role: UserRole.CREATOR,
+      },
+      relations: ['user'],
+    });
+    return uc?.user;
+  }
 }

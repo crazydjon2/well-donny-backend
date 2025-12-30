@@ -55,6 +55,14 @@ export class UserCategoryController {
     return this.service.setOrder(user_id, dto.categoryId, dto.reverse);
   }
 
+  @Put('/set-cards-position')
+  async setCardsPosition(
+    @Body() dto: { categoryId: string; position: number },
+    @UserId() user_id: string,
+  ) {
+    return this.service.setCardsPosition(user_id, dto.categoryId, dto.position);
+  }
+
   @Put('/rate')
   async rateCategory(
     @UserId() userId: string,

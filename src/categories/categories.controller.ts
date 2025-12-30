@@ -26,7 +26,6 @@ export class CategoriesController {
     @Query()
     query: GetCategoriesDTO,
   ): Promise<GetCategories[] | null> {
-    console.log(query);
     return this.categoriesService.getAllCategories(query);
   }
 
